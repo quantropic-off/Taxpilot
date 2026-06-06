@@ -32,7 +32,7 @@ export default function TDSPractice() {
   useEffect(() => {
     const initCase = async () => {
       try {
-        const res = await fetch("http://localhost:7860/api/v1/tds/cases", {
+        const res = await fetch("https://skandaedutech-taxpilot.hf.space/api/v1/tds/cases", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -108,7 +108,7 @@ export default function TDSPractice() {
     // Push to backend if valid
     if (validationErrors.length === 0) {
       try {
-        await fetch(`http://localhost:7860/api/v1/tds/cases/${caseId}/deductions`, {
+        await fetch(`https://skandaedutech-taxpilot.hf.space/api/v1/tds/cases/${caseId}/deductions`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({

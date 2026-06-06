@@ -21,7 +21,7 @@ export default function NewStudent() {
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await fetch("http://localhost:7860/api/v1/students/", {
+      const res = await fetch("https://skandaedutech-taxpilot.hf.space/api/v1/students/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData)

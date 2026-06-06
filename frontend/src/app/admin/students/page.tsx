@@ -8,7 +8,7 @@ export default function StudentList() {
   const [students, setStudents] = useState<any[]>([]);
 
   useEffect(() => {
-    fetch("http://localhost:7860/api/v1/students/")
+    fetch("https://skandaedutech-taxpilot.hf.space/api/v1/students/")
       .then(r => r.json())
       .then(data => {
         if (Array.isArray(data)) setStudents(data);
