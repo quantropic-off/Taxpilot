@@ -29,7 +29,7 @@ export default function MockITaxPortal() {
   const handleCreateCase = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const res = await fetch("/_/backend/api/v1/itr/cases", {
+      const res = await fetch("https://skandaedutech-taxpilot.hf.space/api/v1/itr/cases", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(caseData)
@@ -52,7 +52,7 @@ export default function MockITaxPortal() {
         incomes: incomes.filter(i => i.amount > 0),
         deductions: deductions.filter(d => d.amount_claimed > 0)
       };
-      const res = await fetch(`/_/backend/api/v1/itr/cases/${caseId}/compute`, {
+      const res = await fetch(`https://skandaedutech-taxpilot.hf.space/api/v1/itr/cases/${caseId}/compute`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)
@@ -68,7 +68,7 @@ export default function MockITaxPortal() {
 
   const handleFileITR = async () => {
     if (!caseId) return;
-    const res = await fetch(`/_/backend/api/v1/itr/cases/${caseId}/file`, { method: "POST" });
+    const res = await fetch(`https://skandaedutech-taxpilot.hf.space/api/v1/itr/cases/${caseId}/file`, { method: "POST" });
     const data = await res.json();
     if (res.ok) setAck(data.ack_number);
   };

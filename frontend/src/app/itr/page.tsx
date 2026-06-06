@@ -26,7 +26,7 @@ export default function ITRPractice() {
   useEffect(() => {
     const initCase = async () => {
       try {
-        const res = await fetch("/_/backend/api/v1/itr/cases", {
+        const res = await fetch("https://skandaedutech-taxpilot.hf.space/api/v1/itr/cases", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({

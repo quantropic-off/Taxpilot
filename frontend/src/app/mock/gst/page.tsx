@@ -29,7 +29,7 @@ export default function MockGSTPortal() {
   const handleCreateCase = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const res = await fetch("/_/backend/api/v1/gst/cases", {
+      const res = await fetch("https://skandaedutech-taxpilot.hf.space/api/v1/gst/cases", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(caseData)
@@ -48,7 +48,7 @@ export default function MockGSTPortal() {
   const handleAddInvoice = async () => {
     if (!caseId) return alert("Create a case first!");
     try {
-      const res = await fetch(`/_/backend/api/v1/gst/cases/${caseId}/invoices`, {
+      const res = await fetch(`https://skandaedutech-taxpilot.hf.space/api/v1/gst/cases/${caseId}/invoices`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newInvoice)
@@ -70,14 +70,14 @@ export default function MockGSTPortal() {
 
   const handleGenerateGSTR1 = async () => {
     if (!caseId) return;
-    const res = await fetch(`/_/backend/api/v1/gst/cases/${caseId}/generate-gstr1`, { method: "POST" });
+    const res = await fetch(`https://skandaedutech-taxpilot.hf.space/api/v1/gst/cases/${caseId}/generate-gstr1`, { method: "POST" });
     const data = await res.json();
     if (res.ok) setGstr1Json(data.gstr1_json);
   };
 
   const handleSimulateARN = async () => {
     if (!caseId) return;
-    const res = await fetch(`/_/backend/api/v1/gst/cases/${caseId}/simulate-arn`, { method: "POST" });
+    const res = await fetch(`https://skandaedutech-taxpilot.hf.space/api/v1/gst/cases/${caseId}/simulate-arn`, { method: "POST" });
     const data = await res.json();
     if (res.ok) setArn(data.arn);
   };

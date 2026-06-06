@@ -30,7 +30,7 @@ export default function Dashboard() {
     const fetchData = async () => {
       try {
         const [studentsRes] = await Promise.allSettled([
-          fetch("/_/backend/api/v1/students/"),
+          fetch("https://skandaedutech-taxpilot.hf.space/api/v1/students/"),
         ]);
         // We'll set real data when endpoints exist, for now show 0
         setStats({

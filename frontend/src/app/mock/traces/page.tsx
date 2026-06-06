@@ -28,7 +28,7 @@ export default function MockTracesPortal() {
   const handleCreateCase = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const res = await fetch("/_/backend/api/v1/tds/cases", {
+      const res = await fetch("https://skandaedutech-taxpilot.hf.space/api/v1/tds/cases", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(caseData)
@@ -47,7 +47,7 @@ export default function MockTracesPortal() {
   const handleAddDeduction = async () => {
     if (!caseId) return alert("Create a case first!");
     try {
-      const res = await fetch(`/_/backend/api/v1/tds/cases/${caseId}/deductions`, {
+      const res = await fetch(`https://skandaedutech-taxpilot.hf.space/api/v1/tds/cases/${caseId}/deductions`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newDeduction)
@@ -70,14 +70,14 @@ export default function MockTracesPortal() {
 
   const handleGenerateChallan = async () => {
     if (!caseId) return;
-    const res = await fetch(`/_/backend/api/v1/tds/cases/${caseId}/generate-challan`, { method: "POST" });
+    const res = await fetch(`https://skandaedutech-taxpilot.hf.space/api/v1/tds/cases/${caseId}/generate-challan`, { method: "POST" });
     const data = await res.json();
     if (res.ok) setChallanJson(data.challan);
   };
 
   const handleSimulateFiling = async () => {
     if (!caseId) return;
-    const res = await fetch(`/_/backend/api/v1/tds/cases/${caseId}/file-26q`, { method: "POST" });
+    const res = await fetch(`https://skandaedutech-taxpilot.hf.space/api/v1/tds/cases/${caseId}/file-26q`, { method: "POST" });
     const data = await res.json();
     if (res.ok) setPrn(data.receipt_number);
   };
