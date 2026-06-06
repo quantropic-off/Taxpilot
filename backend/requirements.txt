@@ -5,7 +5,7 @@ redis
 psycopg2-binary
 sqlalchemy
 alembic
-pydantic
+pydantic[email]
 pydantic-settings
 python-jose[cryptography]
 passlib[bcrypt]
