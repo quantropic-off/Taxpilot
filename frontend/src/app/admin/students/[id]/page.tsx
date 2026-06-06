@@ -16,11 +16,10 @@ export default function StudentPerformance() {
     // if a direct endpoint doesn't exist, this is a safe fallback.
     const fetchData = async () => {
       try {
-        const res = await fetch("https://skandaedutech-taxpilot.hf.space/api/v1/admin/students/stats");
+        const res = await fetch("https://skandaedutech-taxpilot.hf.space/api/v1/students/");
         if (res.ok) {
-          const stats = await res.json();
-          // The stats endpoint usually returns a list of student objects
-          const found = stats.find((s: any) => String(s.id) === String(studentId));
+          const studentsList = await res.json();
+          const found = studentsList.find((s: any) => String(s.id) === String(studentId));
           if (found) setStudent(found);
         }
       } catch (e) {
