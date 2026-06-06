@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>TaxPro Academy | GSTR-1 Practice Simulator</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-background": "#dae2fd",
+                        "surface-container-high": "#222a3d",
+                        "inverse-primary": "#0053db",
+                        "on-primary-container": "#eeefff",
+                        "on-surface": "#dae2fd",
+                        "on-tertiary-container": "#d7f6ff",
+                        "surface-tint": "#b4c5ff",
+                        "secondary": "#d2bbff",
+                        "inverse-surface": "#dae2fd",
+                        "on-error": "#690005",
+                        "surface-variant": "#2d3449",
+                        "surface-bright": "#31394d",
+                        "on-secondary-fixed": "#25005a",
+                        "on-primary-fixed-variant": "#003ea8",
+                        "on-secondary-fixed-variant": "#5a00c6",
+                        "inverse-on-surface": "#283044",
+                        "primary-fixed": "#dbe1ff",
+                        "outline": "#8d90a0",
+                        "tertiary-fixed": "#acedff",
+                        "secondary-container": "#6001d1",
+                        "secondary-fixed-dim": "#d2bbff",
+                        "primary-fixed-dim": "#b4c5ff",
+                        "on-error-container": "#ffdad6",
+                        "error-container": "#93000a",
+                        "tertiary": "#4cd7f6",
+                        "primary-container": "#2563eb",
+                        "error": "#ffb4ab",
+                        "background": "#0b1326",
+                        "surface-dim": "#0b1326",
+                        "tertiary-container": "#00788c",
+                        "surface-container-low": "#131b2e",
+                        "on-secondary-container": "#c9aeff",
+                        "surface": "#0b1326",
+                        "on-tertiary-fixed-variant": "#004e5c",
+                        "outline-variant": "#434655",
+                        "primary": "#b4c5ff",
+                        "on-primary-fixed": "#00174b",
+                        "tertiary-fixed-dim": "#4cd7f6",
+                        "surface-container-lowest": "#060e20",
+                        "on-tertiary-fixed": "#001f26",
+                        "on-tertiary": "#003640",
+                        "on-secondary": "#3f008e",
+                        "surface-container": "#171f33",
+                        "on-surface-variant": "#c3c6d7",
+                        "secondary-fixed": "#eaddff",
+                        "on-primary": "#002a78",
+                        "surface-container-highest": "#2d3449"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "gutter": "24px",
+                        "base": "8px",
+                        "sidebar_width": "280px",
+                        "margin_mobile": "16px",
+                        "margin_desktop": "40px",
+                        "topbar_height": "72px"
+                    },
+                    "fontFamily": {
+                        "label-xs": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "display-xl": ["Inter"]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { background-color: #0b1326; color: #dae2fd; font-family: 'Inter', sans-serif; }
+        .glass-panel {
+            background: rgba(23, 31, 51, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(67, 70, 85, 0.5);
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .scroll-hide::-webkit-scrollbar { display: none; }
+        .wizard-step-active { color: #b4c5ff; }
+        .wizard-line-active { background-color: #2563eb; }
+    </style>
+</head>
+<body class="overflow-hidden">
+<!-- Sidebar Navigation -->
+<aside class="fixed left-0 top-0 h-full w-[280px] bg-surface-container border-r border-outline-variant flex flex-col p-4 gap-2 z-50">
+<div class="mb-8 px-4">
+<h1 class="font-headline-md text-headline-md font-bold text-primary tracking-tight">TaxPro Academy</h1>
+<p class="text-on-surface-variant font-label-xs text-label-xs opacity-70">Simulator v2.4</p>
+</div>
+<nav class="flex flex-col gap-1 flex-grow">
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-variant rounded-xl transition-all duration-300" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-body-sm text-body-sm">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-variant rounded-xl transition-all duration-300" href="#">
+<span class="material-symbols-outlined">menu_book</span>
+<span class="font-body-sm text-body-sm">Modules</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 bg-secondary-container text-on-secondary-container rounded-xl font-bold transition-all duration-300" href="#">
+<span class="material-symbols-outlined">match_case</span>
+<span class="font-body-sm text-body-sm">Practice Cases</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-variant rounded-xl transition-all duration-300" href="#">
+<span class="material-symbols-outlined">quiz</span>
+<span class="font-body-sm text-body-sm">Exams</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-variant rounded-xl transition-all duration-300" href="#">
+<span class="material-symbols-outlined">smart_toy</span>
+<span class="font-body-sm text-body-sm">AI Assistant</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-variant rounded-xl transition-all duration-300 mt-auto" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-body-sm text-body-sm">Settings</span>
+</a>
+</nav>
+<div class="mt-4 p-4 rounded-2xl bg-primary-container/10 border border-primary/20">
+<p class="font-label-xs text-label-xs text-primary mb-2">PRO PLAN ACTIVE</p>
+<button class="w-full py-2 bg-primary text-on-primary rounded-lg font-bold text-sm active:scale-95 transition-transform">
+                Upgrade to Pro
+            </button>
+</div>
+</aside>
+<!-- Top Navbar -->
+<header class="fixed top-0 right-0 w-[calc(100%-280px)] h-[72px] bg-surface-dim/80 backdrop-blur-xl border-b border-outline-variant flex justify-between items-center px-8 z-40">
+<div class="flex items-center gap-4">
+<span class="text-primary font-bold text-xl">GSTR-1 Practice Simulator</span>
+<span class="px-2 py-1 bg-surface-container-high rounded text-[10px] text-on-surface-variant border border-outline-variant">LIVE SCENARIO</span>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-4 text-on-surface-variant">
+<a class="font-label-xs text-label-xs hover:text-primary transition-colors" href="#">Documentation</a>
+<a class="font-label-xs text-label-xs hover:text-primary transition-colors" href="#">Help</a>
+</div>
+<div class="flex items-center gap-3 border-l border-outline-variant pl-6">
+<button class="p-2 text-on-surface-variant hover:bg-surface-variant rounded-full transition-colors relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full border-2 border-surface-dim"></span>
+</button>
+<div class="flex items-center gap-2 cursor-pointer">
+<img alt="Student Profile Picture" class="w-8 h-8 rounded-full border border-primary/30" data-alt="A professional studio headshot of a focused young professional man with a friendly expression. He is wearing a modern charcoal grey blazer over a crisp white shirt. The background is a soft, out-of-focus tech office environment with cool blue and grey tones, maintaining the premium corporate aesthetic of the dashboard." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDLOSrr3PmZByVeoq8Zl7Jb_lHVvWq-9mDUcFP0X67tE8NPRgYHUhGtALceHoNWA1L9ceR69NDmEW-YuEVIsQPF4LFlWf7SOYrDDlMYIFWZQ_oe97WvPS3tImU920ZWOmSQIwqW0DPDPKMFtwYUGDyTLJ4M6DR6C98CIRnc08NmHwpAcb2ypo9rC4Chm3Kp1wpAjYyabXQVK4768a6YhMcUolcSFb3zBeTr_zYdz9ThHe01W1dgZMzXtx6Upu42bexbeYax5tiKrKU"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="ml-[280px] mt-[72px] h-[calc(100vh-72px)] p-8 overflow-y-auto scroll-hide">
+<!-- Wizard Header -->
+<div class="max-w-6xl mx-auto mb-10">
+<div class="flex items-center justify-between relative mb-4">
+<!-- Wizard Progress Lines -->
+<div class="absolute top-1/2 left-0 w-full h-[2px] bg-surface-variant -translate-y-1/2 z-0"></div>
+<div class="absolute top-1/2 left-0 w-[12%] h-[2px] bg-primary -translate-y-1/2 z-0 transition-all duration-700"></div>
+<!-- Steps -->
+<div class="relative z-10 flex flex-col items-center gap-2 group">
+<div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-on-primary font-bold shadow-lg shadow-primary/20">1</div>
+<span class="font-label-xs text-label-xs text-primary font-bold">Invoices</span>
+</div>
+<div class="relative z-10 flex flex-col items-center gap-2 opacity-50 grayscale">
+<div class="w-10 h-10 rounded-full bg-surface-container-high border border-outline flex items-center justify-center text-on-surface">2</div>
+<span class="font-label-xs text-label-xs text-on-surface-variant">HSN Summary</span>
+</div>
+<div class="relative z-10 flex flex-col items-center gap-2 opacity-50 grayscale">
+<div class="w-10 h-10 rounded-full bg-surface-container-high border border-outline flex items-center justify-center text-on-surface">3</div>
+<span class="font-label-xs text-label-xs text-on-surface-variant">Tax Calculation</span>
+</div>
+<div class="relative z-10 flex flex-col items-center gap-2 opacity-50 grayscale">
+<div class="w-10 h-10 rounded-full bg-surface-container-high border border-outline flex items-center justify-center text-on-surface">4</div>
+<span class="font-label-xs text-label-xs text-on-surface-variant">Filing &amp; Preview</span>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-12 gap-8 max-w-7xl mx-auto">
+<!-- Left Column: Invoice Management -->
+<div class="col-span-12 lg:col-span-9 space-y-6">
+<!-- Action Bar -->
+<div class="flex items-center justify-between bg-surface-container/50 p-4 rounded-2xl border border-outline-variant backdrop-blur-md">
+<div class="flex items-center gap-4">
+<button class="flex items-center gap-2 px-4 py-2 bg-primary text-on-primary rounded-xl font-bold text-sm hover:brightness-110 active:scale-95 transition-all">
+<span class="material-symbols-outlined text-[18px]">add</span>
+                            Add Invoice
+                        </button>
+<button class="flex items-center gap-2 px-4 py-2 bg-surface-variant text-on-surface rounded-xl font-medium text-sm hover:bg-outline-variant transition-all">
+<span class="material-symbols-outlined text-[18px]">upload_file</span>
+                            Bulk Import
+                        </button>
+</div>
+<div class="flex items-center gap-3">
+<button class="p-2 text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined">filter_list</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined">download</span>
+</button>
+</div>
+</div>
+<!-- Invoice Table Card -->
+<div class="glass-panel rounded-3xl overflow-hidden">
+<div class="p-6 border-b border-outline-variant flex justify-between items-center bg-surface-container">
+<h2 class="font-headline-md text-[18px] text-on-surface">Section 4A: B2B Invoices</h2>
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-tertiary"></span>
+<span class="text-on-surface-variant text-xs uppercase tracking-wider">8 Records Loaded</span>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-high/50 text-on-surface-variant font-label-xs text-[11px] uppercase tracking-widest">
+<th class="px-6 py-4 border-b border-outline-variant">GSTIN/UIN</th>
+<th class="px-6 py-4 border-b border-outline-variant">Invoice No</th>
+<th class="px-6 py-4 border-b border-outline-variant">Date</th>
+<th class="px-6 py-4 border-b border-outline-variant text-right">Taxable Value</th>
+<th class="px-6 py-4 border-b border-outline-variant text-right">Tax Amount</th>
+<th class="px-6 py-4 border-b border-outline-variant text-center">Status</th>
+<th class="px-6 py-4 border-b border-outline-variant"></th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/30">
+<tr class="hover:bg-primary/5 transition-colors group">
+<td class="px-6 py-4 font-mono text-sm text-primary">27AADCM3901R1Z9</td>
+<td class="px-6 py-4 text-sm">INV/24/001</td>
+<td class="px-6 py-4 text-sm text-on-surface-variant">12 Oct 2023</td>
+<td class="px-6 py-4 text-sm text-right font-semibold">₹ 12,500.00</td>
+<td class="px-6 py-4 text-sm text-right text-tertiary font-semibold">₹ 2,250.00</td>
+<td class="px-6 py-4 text-center">
+<span class="px-2 py-1 rounded bg-tertiary/10 text-tertiary text-[10px] font-bold border border-tertiary/30">VALIDATED</span>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="opacity-0 group-hover:opacity-100 p-1 text-on-surface-variant hover:text-primary transition-all">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+</td>
+</tr>
+<tr class="hover:bg-error/5 transition-colors group">
+<td class="px-6 py-4 font-mono text-sm text-error">INVALID_GSTIN</td>
+<td class="px-6 py-4 text-sm">INV/24/002</td>
+<td class="px-6 py-4 text-sm text-on-surface-variant">14 Oct 2023</td>
+<td class="px-6 py-4 text-sm text-right font-semibold">₹ 45,000.00</td>
+<td class="px-6 py-4 text-sm text-right text-tertiary font-semibold">₹ 8,100.00</td>
+<td class="px-6 py-4 text-center">
+<span class="px-2 py-1 rounded bg-error/10 text-error text-[10px] font-bold border border-error/30">ERROR</span>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="p-1 text-error hover:scale-110 transition-all">
+<span class="material-symbols-outlined text-[20px]">error</span>
+</button>
+</td>
+</tr>
+<tr class="hover:bg-primary/5 transition-colors group">
+<td class="px-6 py-4 font-mono text-sm text-primary">07BKCPN8231L1Z2</td>
+<td class="px-6 py-4 text-sm">INV/24/003</td>
+<td class="px-6 py-4 text-sm text-on-surface-variant">15 Oct 2023</td>
+<td class="px-6 py-4 text-sm text-right font-semibold">₹ 8,200.00</td>
+<td class="px-6 py-4 text-sm text-right text-tertiary font-semibold">₹ 1,476.00</td>
+<td class="px-6 py-4 text-center">
+<span class="px-2 py-1 rounded bg-tertiary/10 text-tertiary text-[10px] font-bold border border-tertiary/30">VALIDATED</span>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="opacity-0 group-hover:opacity-100 p-1 text-on-surface-variant hover:text-primary transition-all">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Footer Navigation Buttons -->
+<div class="flex items-center justify-between pt-4">
+<button class="flex items-center gap-2 px-6 py-3 border border-outline-variant text-on-surface rounded-2xl font-bold hover:bg-surface-variant transition-all">
+<span class="material-symbols-outlined">arrow_back</span>
+                        Previous Step
+                    </button>
+<div class="flex items-center gap-4">
+<button class="px-6 py-3 text-primary font-bold hover:underline">Auto-save Draft</button>
+<button class="flex items-center gap-2 px-8 py-3 bg-primary text-on-primary rounded-2xl font-bold shadow-xl shadow-primary/20 hover:scale-105 active:scale-95 transition-all">
+                            Next Step: HSN
+                            <span class="material-symbols-outlined">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Right Column: Panel & Calculator -->
+<div class="col-span-12 lg:col-span-3 space-y-6">
+<!-- Real-time Validation Sidebar -->
+<div class="glass-panel rounded-3xl p-6 border-l-4 border-l-error">
+<div class="flex items-center justify-between mb-6">
+<h3 class="font-bold text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-error">report</span>
+                            Errors (3)
+                        </h3>
+<span class="text-[10px] font-bold text-error animate-pulse">FIX REQUIRED</span>
+</div>
+<div class="space-y-4">
+<div class="p-3 bg-error/10 rounded-xl border border-error/20">
+<p class="text-[11px] font-bold text-error uppercase mb-1">Invalid GSTIN Structure</p>
+<p class="text-xs text-on-surface-variant leading-relaxed">Invoice INV/24/002 has a non-standard GSTIN format. Check Pan-Linkage.</p>
+</div>
+<div class="p-3 bg-warning/10 rounded-xl border border-yellow-500/20">
+<p class="text-[11px] font-bold text-yellow-500 uppercase mb-1">Tax Rate Mismatch</p>
+<p class="text-xs text-on-surface-variant leading-relaxed">Tax amount ₹2,250 doesn't match 18% slab for Invoice 001.</p>
+</div>
+<div class="p-3 bg-surface-container-highest rounded-xl border border-outline-variant">
+<p class="text-[11px] font-bold text-on-surface-variant uppercase mb-1">HSN Code Missing</p>
+<p class="text-xs text-on-surface-variant leading-relaxed">3 items in Table 4A are missing mandatory 6-digit HSN codes.</p>
+</div>
+</div>
+<button class="w-full mt-6 py-2 border border-outline-variant text-on-surface rounded-xl text-sm font-bold hover:bg-surface-variant transition-all">
+                        HSN Validation Tool
+                    </button>
+</div>
+<!-- Live Calculator Widget -->
+<div class="glass-panel rounded-3xl p-6 bg-gradient-to-br from-primary-container/20 to-secondary-container/20 border-primary/20">
+<h3 class="font-bold text-on-surface mb-6 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">calculate</span>
+                        Tax Summary
+                    </h3>
+<div class="space-y-4">
+<div class="flex justify-between items-center border-b border-outline-variant/30 pb-2">
+<span class="text-xs text-on-surface-variant">Total Taxable Value</span>
+<span class="font-mono font-bold text-sm">₹ 65,700.00</span>
+</div>
+<div class="flex justify-between items-center border-b border-outline-variant/30 pb-2">
+<span class="text-xs text-on-surface-variant">Integrated Tax (IGST)</span>
+<span class="font-mono font-bold text-sm">₹ 11,826.00</span>
+</div>
+<div class="flex justify-between items-center border-b border-outline-variant/30 pb-2">
+<span class="text-xs text-on-surface-variant">Central Tax (CGST)</span>
+<span class="font-mono font-bold text-sm">₹ 0.00</span>
+</div>
+<div class="flex justify-between items-center border-b border-outline-variant/30 pb-2">
+<span class="text-xs text-on-surface-variant">State Tax (SGST)</span>
+<span class="font-mono font-bold text-sm">₹ 0.00</span>
+</div>
+<div class="flex justify-between items-center pt-2">
+<span class="text-sm font-bold text-primary">Total Tax Liability</span>
+<span class="font-mono font-black text-lg text-primary">₹ 11,826.00</span>
+</div>
+</div>
+<button class="w-full mt-6 py-3 bg-white/10 backdrop-blur text-white rounded-xl text-sm font-bold hover:bg-white/20 transition-all border border-white/10">
+                        Preview Return (PDF)
+                    </button>
+</div>
+<!-- Practice Info Card -->
+<div class="glass-panel rounded-3xl p-6 relative overflow-hidden group">
+<div class="relative z-10">
+<h4 class="text-xs font-bold text-on-surface uppercase mb-2">Practice Goal</h4>
+<p class="text-sm text-on-surface-variant mb-4">Complete the GSTR-1 filing with 0 validation errors to earn the 'Compliance Expert' badge.</p>
+<div class="w-full h-1 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-tertiary w-1/3 transition-all duration-1000"></div>
+</div>
+<p class="text-[10px] text-tertiary font-bold mt-2">33% PROGRESS</p>
+</div>
+<div class="absolute -right-4 -bottom-4 opacity-10 group-hover:scale-110 transition-transform duration-700">
+<span class="material-symbols-outlined text-[80px]">workspace_premium</span>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Floating Action Button (Contextual) -->
+<button class="fixed bottom-8 right-8 w-14 h-14 bg-primary-container text-on-primary-container rounded-full shadow-2xl flex items-center justify-center hover:scale-110 active:scale-95 transition-all z-50 group">
+<span class="material-symbols-outlined group-hover:rotate-180 transition-transform duration-500">smart_toy</span>
+<div class="absolute right-16 px-4 py-2 bg-surface-container border border-outline-variant rounded-xl text-xs font-bold whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
+            Need AI Help?
+        </div>
+</button>
+<script>
+        // Micro-interaction for table rows and buttons
+        document.querySelectorAll('button').forEach(btn => {
+            btn.addEventListener('mousedown', () => {
+                btn.style.transform = 'scale(0.95)';
+            });
+            btn.addEventListener('mouseup', () => {
+                btn.style.transform = 'scale(1)';
+            });
+        });
+
+        // Simple animation logic for the wizard progress
+        window.addEventListener('DOMContentLoaded', () => {
+            const progressLine = document.querySelector('.absolute.w-\\[12\\%\\]');
+            setTimeout(() => {
+                progressLine.style.width = '12%'; // Matches the first step highlight
+            }, 500);
+        });
+    </script>
+</body></html>

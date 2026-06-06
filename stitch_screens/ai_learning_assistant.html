@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>TaxPro AI | Learning Assistant</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-effect {
+            background: rgba(23, 31, 51, 0.7);
+            backdrop-filter: blur(24px);
+            border: 1px solid rgba(67, 70, 85, 0.5);
+        }
+        .message-bubble-ai {
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.1) 0%, rgba(96, 1, 209, 0.05) 100%);
+            border: 1px solid rgba(180, 197, 255, 0.1);
+        }
+        .typing-cursor::after {
+            content: '|';
+            animation: blink 1s infinite;
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #434655;
+            border-radius: 10px;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                "on-background": "#dae2fd",
+                "surface-container-high": "#222a3d",
+                "inverse-primary": "#0053db",
+                "on-primary-container": "#eeefff",
+                "on-surface": "#dae2fd",
+                "on-tertiary-container": "#d7f6ff",
+                "surface-tint": "#b4c5ff",
+                "secondary": "#d2bbff",
+                "inverse-surface": "#dae2fd",
+                "on-error": "#690005",
+                "surface-variant": "#2d3449",
+                "surface-bright": "#31394d",
+                "on-secondary-fixed": "#25005a",
+                "on-primary-fixed-variant": "#003ea8",
+                "on-secondary-fixed-variant": "#5a00c6",
+                "inverse-on-surface": "#283044",
+                "primary-fixed": "#dbe1ff",
+                "outline": "#8d90a0",
+                "tertiary-fixed": "#acedff",
+                "secondary-container": "#6001d1",
+                "secondary-fixed-dim": "#d2bbff",
+                "primary-fixed-dim": "#b4c5ff",
+                "on-error-container": "#ffdad6",
+                "error-container": "#93000a",
+                "tertiary": "#4cd7f6",
+                "primary-container": "#2563eb",
+                "error": "#ffb4ab",
+                "background": "#0b1326",
+                "surface-dim": "#0b1326",
+                "tertiary-container": "#00788c",
+                "surface-container-low": "#131b2e",
+                "on-secondary-container": "#c9aeff",
+                "surface": "#0b1326",
+                "on-tertiary-fixed-variant": "#004e5c",
+                "outline-variant": "#434655",
+                "primary": "#b4c5ff",
+                "on-primary-fixed": "#00174b",
+                "tertiary-fixed-dim": "#4cd7f6",
+                "surface-container-lowest": "#060e20",
+                "on-tertiary-fixed": "#001f26",
+                "on-tertiary": "#003640",
+                "on-secondary": "#3f008e",
+                "surface-container": "#171f33",
+                "on-surface-variant": "#c3c6d7",
+                "secondary-fixed": "#eaddff",
+                "on-primary": "#002a78",
+                "surface-container-highest": "#2d3449"
+              },
+              "borderRadius": {
+                "DEFAULT": "0.25rem",
+                "lg": "0.5rem",
+                "xl": "0.75rem",
+                "full": "9999px"
+              },
+              "spacing": {
+                "gutter": "24px",
+                "base": "8px",
+                "sidebar_width": "280px",
+                "margin_mobile": "16px",
+                "margin_desktop": "40px",
+                "topbar_height": "72px"
+              },
+              "fontFamily": {
+                "label-xs": ["Inter"],
+                "headline-md": ["Inter"],
+                "headline-lg": ["Inter"],
+                "body-sm": ["Inter"],
+                "body-lg": ["Inter"],
+                "display-xl": ["Inter"]
+              }
+            }
+          }
+        }
+    </script>
+</head>
+<body class="bg-background text-on-surface font-body-sm selection:bg-primary/30">
+<!-- Sidebar Navigation Shell -->
+<aside class="fixed left-0 top-0 h-full w-[280px] bg-surface-container border-r border-outline-variant shadow-sm flex flex-col p-4 gap-2 z-50 overflow-hidden">
+<div class="flex items-center gap-3 mb-6 px-2">
+<div class="w-10 h-10 rounded-xl bg-primary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-on-primary-container" style="font-variation-settings: 'FILL' 1;">smart_toy</span>
+</div>
+<div>
+<h1 class="font-headline-md text-headline-md font-bold text-primary leading-tight">TaxPro Academy</h1>
+<p class="text-xs text-on-surface-variant opacity-70">Simulator v2.4</p>
+</div>
+</div>
+<nav class="flex-1 flex flex-col gap-1 custom-scrollbar overflow-y-auto">
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-variant rounded-xl transition-colors duration-300" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span>Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-variant rounded-xl transition-colors duration-300" href="#">
+<span class="material-symbols-outlined">menu_book</span>
+<span>Modules</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-variant rounded-xl transition-colors duration-300" href="#">
+<span class="material-symbols-outlined">receipt_long</span>
+<span>Practice Cases</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-variant rounded-xl transition-colors duration-300" href="#">
+<span class="material-symbols-outlined">quiz</span>
+<span>Exams</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 bg-secondary-container text-on-secondary-container rounded-xl font-bold transition-transform active:scale-95" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">smart_toy</span>
+<span>AI Assistant</span>
+</a>
+<div class="mt-8 mb-2 px-4 flex items-center gap-2">
+<span class="text-[10px] font-bold uppercase tracking-widest text-outline">Chat History</span>
+<div class="h-[1px] flex-1 bg-outline-variant/30"></div>
+</div>
+<div class="flex flex-col gap-1">
+<button class="flex items-center gap-3 px-4 py-2.5 text-body-sm text-on-surface-variant hover:bg-surface-variant/50 rounded-lg text-left truncate group transition-all">
+<span class="material-symbols-outlined text-[18px] opacity-60">chat_bubble</span>
+<span class="truncate">Explain GSTR-3B offsets</span>
+</button>
+<button class="flex items-center gap-3 px-4 py-2.5 text-body-sm text-on-surface-variant hover:bg-surface-variant/50 rounded-lg text-left truncate group transition-all">
+<span class="material-symbols-outlined text-[18px] opacity-60">chat_bubble</span>
+<span class="truncate">HSN code search logic</span>
+</button>
+<button class="flex items-center gap-3 px-4 py-2.5 text-body-sm text-on-surface-variant hover:bg-surface-variant/50 rounded-lg text-left truncate group transition-all">
+<span class="material-symbols-outlined text-[18px] opacity-60">chat_bubble</span>
+<span class="truncate">Section 54 claim proof</span>
+</button>
+</div>
+</nav>
+<div class="mt-auto pt-4 border-t border-outline-variant/30">
+<button class="w-full py-3 px-4 bg-primary text-on-primary font-bold rounded-xl shadow-lg hover:brightness-110 active:scale-[0.98] transition-all">
+                Upgrade to Pro
+            </button>
+<a class="flex items-center gap-3 px-4 py-3 mt-2 text-on-surface-variant hover:bg-surface-variant rounded-xl transition-colors duration-300" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span>Settings</span>
+</a>
+</div>
+</aside>
+<!-- Top Navigation Bar -->
+<header class="fixed top-0 right-0 w-[calc(100%-280px)] h-[72px] bg-surface-dim/80 backdrop-blur-xl border-b border-outline-variant flex justify-between items-center px-gutter z-40">
+<div class="flex items-center gap-6">
+<div class="relative group">
+<div class="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-outline group-focus-within:text-primary transition-colors">search</span>
+</div>
+<input class="bg-surface-container-low border border-outline-variant rounded-full py-2 pl-10 pr-4 w-80 text-body-sm focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all" placeholder="Search tax laws or queries..." type="text"/>
+</div>
+<div class="hidden md:flex gap-6">
+<a class="font-label-xs text-label-xs text-on-surface-variant hover:text-primary transition-colors" href="#">Documentation</a>
+<a class="font-label-xs text-label-xs text-on-surface-variant hover:text-primary transition-colors" href="#">Help</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 text-on-surface-variant hover:bg-surface-variant rounded-full transition-colors relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full"></span>
+</button>
+<button class="p-2 text-on-surface-variant hover:bg-surface-variant rounded-full transition-colors">
+<span class="material-symbols-outlined">apps</span>
+</button>
+<div class="w-10 h-10 rounded-full border-2 border-primary-container overflow-hidden p-0.5">
+<img alt="Student Profile Picture" class="w-full h-full object-cover rounded-full" data-alt="Close up portrait of a young professional tax consultant smiling warmly against a blurred modern office background with soft bokeh. The lighting is bright and optimistic, showcasing a high-quality corporate aesthetic with cool blue and grey undertones that align with the platform's professional design." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBjZS_G4G0Gy_wFaSUBa-KQytsdVJWQFmPyhZwAKstAPdvs2G4qxlWgotwDb46mWGreW6LH46AVQL3VtsaOpZ8rVxVhWTVe6JqqRMkkNgydKCT6uV6gktYdfl4GASl4F5mNIEy_OcDHpaAQGZR9qp3fhbjE5Z7KEJk722hPnsw4df0BMfYPlK3Bblmtvmh_eT6cW13YgjYRCpbI7SpRIZ3PGpHdTXwaPTLYszhCr8oSoSGs6c69V-ESMGKNjEiQfxMmR9S5IyF5YgU"/>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="ml-[280px] pt-[72px] h-screen flex flex-col bg-background relative">
+<!-- Chat Container -->
+<div class="flex-1 overflow-y-auto px-gutter py-8 space-y-8 custom-scrollbar pb-40">
+<!-- User Query Message -->
+<div class="flex justify-end animate-in fade-in slide-in-from-right-4 duration-500">
+<div class="max-w-2xl bg-surface-container-high p-4 rounded-2xl rounded-tr-none border border-outline-variant shadow-sm">
+<p class="text-on-surface font-medium">Explain GSTR-1 Section 4A logic for B2B supplies including reverse charge.</p>
+<div class="mt-2 flex items-center gap-2 opacity-50">
+<span class="text-[10px] font-bold">14:02 PM</span>
+<span class="material-symbols-outlined text-[14px]">done_all</span>
+</div>
+</div>
+</div>
+<!-- AI Response Message -->
+<div class="flex justify-start animate-in fade-in slide-in-from-left-4 duration-700 delay-200">
+<div class="max-w-3xl flex gap-4">
+<div class="w-9 h-9 rounded-lg bg-primary-container flex-shrink-0 flex items-center justify-center mt-1">
+<span class="material-symbols-outlined text-[20px] text-on-primary-container" style="font-variation-settings: 'FILL' 1;">smart_toy</span>
+</div>
+<div class="space-y-4">
+<div class="message-bubble-ai p-6 rounded-3xl rounded-tl-none shadow-xl">
+<h3 class="font-headline-md text-headline-md text-primary mb-3">Understanding GSTR-1: Table 4A</h3>
+<p class="text-on-surface leading-relaxed mb-4">
+                                Section 4A of GSTR-1 is designed to capture <span class="text-secondary font-bold">Taxable outward supplies</span> made to registered persons (B2B). This includes all supplies other than those attracting reverse charge and supplies made through e-commerce operators.
+                            </p>
+<!-- Concept Card -->
+<div class="bg-surface-container-low/50 border border-outline-variant p-4 rounded-xl mb-4">
+<div class="flex items-center gap-2 mb-2 text-tertiary">
+<span class="material-symbols-outlined">info</span>
+<span class="font-bold text-xs uppercase tracking-wider">Key Logic</span>
+</div>
+<ul class="space-y-2 text-on-surface-variant">
+<li class="flex gap-2"><span class="text-primary">•</span> In Table 4A, the supplier pays the tax and takes credit (if applicable).</li>
+<li class="flex gap-2"><span class="text-primary">•</span> Reverse charge supplies are strictly excluded here and reported in Table 4B.</li>
+<li class="flex gap-2"><span class="text-primary">•</span> Amendments to these invoices are handled separately in Table 9.</li>
+</ul>
+</div>
+<p class="text-on-surface mb-4">Here's how the calculation logic is structured in the simulator engine:</p>
+<!-- Calculation Block (Code-like) -->
+<div class="bg-surface-container-lowest font-mono p-4 rounded-lg border border-outline-variant text-sm text-tertiary/90 overflow-x-auto">
+<div class="flex gap-4">
+<span class="text-outline">01</span>
+<span>const calculateTotalTax = (baseValue, taxRate) =&gt; {</span>
+</div>
+<div class="flex gap-4">
+<span class="text-outline">02</span>
+<span class="pl-4">let igst = 0, cgst = 0, sgst = 0;</span>
+</div>
+<div class="flex gap-4">
+<span class="text-outline">03</span>
+<span class="pl-4">if (isInterState) {</span>
+</div>
+<div class="flex gap-4">
+<span class="text-outline">04</span>
+<span class="pl-8">igst = baseValue * taxRate;</span>
+</div>
+<div class="flex gap-4">
+<span class="text-outline">05</span>
+<span class="pl-4">} else {</span>
+</div>
+<div class="flex gap-4">
+<span class="text-outline">06</span>
+<span class="pl-8">cgst = (baseValue * taxRate) / 2;</span>
+</div>
+<div class="flex gap-4">
+<span class="text-outline">07</span>
+<span class="pl-8">sgst = (baseValue * taxRate) / 2;</span>
+</div>
+<div class="flex gap-4">
+<span class="text-outline">08</span>
+<span class="pl-4">}</span>
+</div>
+<div class="flex gap-4">
+<span class="text-outline">09</span>
+<span class="pl-4">return { igst, cgst, sgst };</span>
+</div>
+<div class="flex gap-4">
+<span class="text-outline">10</span>
+<span>};</span>
+</div>
+</div>
+</div>
+<!-- Smart Hints -->
+<div class="flex flex-wrap gap-2">
+<div class="flex items-center gap-2 bg-surface-container-highest/50 px-3 py-1.5 rounded-full border border-outline-variant text-[12px] text-tertiary">
+<span class="material-symbols-outlined text-[16px]">lightbulb</span>
+<span>Check POS rules for SEZ</span>
+</div>
+<div class="flex items-center gap-2 bg-surface-container-highest/50 px-3 py-1.5 rounded-full border border-outline-variant text-[12px] text-tertiary">
+<span class="material-symbols-outlined text-[16px]">lightbulb</span>
+<span>Validation: GSTIN format</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Placeholder for Typing Animation -->
+<div class="flex justify-start opacity-0 transition-opacity duration-300" id="typing-indicator">
+<div class="flex gap-4">
+<div class="w-9 h-9 rounded-lg bg-primary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px] text-on-primary-container">smart_toy</span>
+</div>
+<div class="bg-surface-container-high/50 px-6 py-4 rounded-full rounded-tl-none border border-outline-variant">
+<div class="flex gap-1.5">
+<div class="w-2 h-2 bg-primary rounded-full animate-bounce"></div>
+<div class="w-2 h-2 bg-primary rounded-full animate-bounce [animation-delay:0.2s]"></div>
+<div class="w-2 h-2 bg-primary rounded-full animate-bounce [animation-delay:0.4s]"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Bottom Input & Controls -->
+<div class="absolute bottom-0 left-0 w-full p-gutter bg-gradient-to-t from-background via-background to-transparent pt-20">
+<div class="max-w-4xl mx-auto space-y-4">
+<!-- Suggested Prompts -->
+<div class="flex flex-wrap justify-center gap-2 overflow-x-auto pb-2 px-4 no-scrollbar">
+<button class="whitespace-nowrap px-4 py-2 bg-surface-container border border-outline-variant hover:border-primary/50 text-on-surface-variant hover:text-primary rounded-full text-xs font-medium transition-all">
+                        Calculate TDS on Rent
+                    </button>
+<button class="whitespace-nowrap px-4 py-2 bg-surface-container border border-outline-variant hover:border-primary/50 text-on-surface-variant hover:text-primary rounded-full text-xs font-medium transition-all">
+                        Check ITR-3 Eligibility
+                    
+</button><button class="whitespace-nowrap px-4 py-2 bg-surface-container border border-outline-variant hover:border-primary/50 text-on-surface-variant hover:text-primary rounded-full text-xs font-medium transition-all">
+                        Explain 80C Limits
+                    </button>
+<button class="whitespace-nowrap px-4 py-2 bg-surface-container border border-outline-variant hover:border-primary/50 text-on-surface-variant hover:text-primary rounded-full text-xs font-medium transition-all">
+                        ITC Apportionment Rules
+                    </button>
+</div>
+<!-- Main Input Box -->
+<div class="relative glass-effect rounded-[24px] shadow-2xl p-2 focus-within:ring-2 focus-within:ring-primary/20 transition-all border-outline-variant/50">
+<div class="flex items-end gap-2 pr-2">
+<textarea class="flex-1 bg-transparent border-none focus:ring-0 text-on-surface placeholder:text-outline py-4 px-4 resize-none max-h-40 min-h-[56px] custom-scrollbar" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'" placeholder="Ask the AI Learning Assistant anything about tax laws..." rows="1"></textarea>
+<div class="flex items-center gap-1 pb-2">
+<button class="p-2.5 text-on-surface-variant hover:bg-surface-variant rounded-full transition-colors" title="Attach Document">
+<span class="material-symbols-outlined text-[20px]">attach_file</span>
+</button>
+<button class="p-2.5 bg-primary text-on-primary rounded-xl hover:brightness-110 active:scale-90 transition-all shadow-lg flex items-center justify-center">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">send</span>
+</button>
+</div>
+</div>
+</div>
+<p class="text-center text-[10px] text-outline pb-2">
+                    TaxPro AI can make mistakes. Check important filing information with a certified CA.
+                </p>
+</div>
+</div>
+</main>
+<!-- Floating Action Button (FAB) - For Simulator Tools -->
+<div class="fixed bottom-32 right-8 flex flex-col gap-3">
+<button class="w-14 h-14 bg-tertiary-container text-on-tertiary-container rounded-2xl shadow-xl flex items-center justify-center hover:scale-110 transition-transform active:scale-95 group relative">
+<span class="material-symbols-outlined text-[24px]">calculate</span>
+<span class="absolute right-full mr-4 px-3 py-1 bg-surface-container-high border border-outline-variant rounded-lg text-xs font-bold text-on-surface whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">Tax Calculator</span>
+</button>
+<button class="w-14 h-14 bg-secondary-container text-on-secondary-container rounded-2xl shadow-xl flex items-center justify-center hover:scale-110 transition-transform active:scale-95 group relative">
+<span class="material-symbols-outlined text-[24px]">history</span>
+<span class="absolute right-full mr-4 px-3 py-1 bg-surface-container-high border border-outline-variant rounded-lg text-xs font-bold text-on-surface whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">Activity Log</span>
+</button>
+</div>
+<script>
+        // Micro-interactions and placeholder logic
+        const textarea = document.querySelector('textarea');
+        const typingIndicator = document.getElementById('typing-indicator');
+
+        // Simulate typing interaction on Enter
+        textarea.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                const text = textarea.value.trim();
+                if (text) {
+                    // Logic to clear and show typing would go here
+                    textarea.value = '';
+                    textarea.style.height = '56px';
+                    
+                    // Show typing indicator
+                    typingIndicator.style.opacity = '1';
+                    setTimeout(() => {
+                        typingIndicator.style.opacity = '0';
+                    }, 2000);
+                }
+            }
+        });
+
+        // Smooth reveal of conversation history items
+        document.querySelectorAll('nav button').forEach((btn, idx) => {
+            btn.style.opacity = '0';
+            btn.style.transform = 'translateX(-10px)';
+            setTimeout(() => {
+                btn.style.transition = 'all 0.4s ease-out';
+                btn.style.opacity = '1';
+                btn.style.transform = 'translateX(0)';
+            }, 100 * (idx + 1));
+        });
+    </script>
+</body></html>

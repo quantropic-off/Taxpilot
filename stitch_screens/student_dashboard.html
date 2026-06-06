@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>TaxPro Academy | Student Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-background": "#dae2fd",
+                    "surface-container-high": "#222a3d",
+                    "inverse-primary": "#0053db",
+                    "on-primary-container": "#eeefff",
+                    "on-surface": "#dae2fd",
+                    "on-tertiary-container": "#d7f6ff",
+                    "surface-tint": "#b4c5ff",
+                    "secondary": "#d2bbff",
+                    "inverse-surface": "#dae2fd",
+                    "on-error": "#690005",
+                    "surface-variant": "#2d3449",
+                    "surface-bright": "#31394d",
+                    "on-secondary-fixed": "#25005a",
+                    "on-primary-fixed-variant": "#003ea8",
+                    "on-secondary-fixed-variant": "#5a00c6",
+                    "inverse-on-surface": "#283044",
+                    "primary-fixed": "#dbe1ff",
+                    "outline": "#8d90a0",
+                    "tertiary-fixed": "#acedff",
+                    "secondary-container": "#6001d1",
+                    "secondary-fixed-dim": "#d2bbff",
+                    "primary-fixed-dim": "#b4c5ff",
+                    "on-error-container": "#ffdad6",
+                    "error-container": "#93000a",
+                    "tertiary": "#4cd7f6",
+                    "primary-container": "#2563eb",
+                    "error": "#ffb4ab",
+                    "background": "#0b1326",
+                    "surface-dim": "#0b1326",
+                    "tertiary-container": "#00788c",
+                    "surface-container-low": "#131b2e",
+                    "on-secondary-container": "#c9aeff",
+                    "surface": "#0b1326",
+                    "on-tertiary-fixed-variant": "#004e5c",
+                    "outline-variant": "#434655",
+                    "primary": "#b4c5ff",
+                    "on-primary-fixed": "#00174b",
+                    "tertiary-fixed-dim": "#4cd7f6",
+                    "surface-container-lowest": "#060e20",
+                    "on-tertiary-fixed": "#001f26",
+                    "on-tertiary": "#003640",
+                    "on-secondary": "#3f008e",
+                    "surface-container": "#171f33",
+                    "on-surface-variant": "#c3c6d7",
+                    "secondary-fixed": "#eaddff",
+                    "on-primary": "#002a78",
+                    "surface-container-highest": "#2d3449"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "gutter": "24px",
+                    "base": "8px",
+                    "sidebar_width": "280px",
+                    "margin_mobile": "16px",
+                    "margin_desktop": "40px",
+                    "topbar_height": "72px"
+            },
+            "fontFamily": {
+                    "label-xs": ["Inter"],
+                    "headline-md": ["Inter"],
+                    "headline-lg": ["Inter"],
+                    "body-sm": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "display-xl": ["Inter"]
+            }
+          }
+        }
+      }
+    </script>
+<style>
+        body {
+            background-color: #0b1326;
+            color: #dae2fd;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+        .glass-card {
+            background: rgba(23, 31, 51, 0.7);
+            backdrop-filter: blur(24px);
+            border: 1px solid rgba(67, 70, 85, 0.5);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .nav-active-indicator {
+            position: absolute;
+            left: 0;
+            width: 4px;
+            height: 24px;
+            background-color: #b4c5ff;
+            border-radius: 0 4px 4px 0;
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0b1326;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #434655;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="dark bg-background text-on-surface">
+<!-- Sidebar Navigation -->
+<aside class="fixed left-0 top-0 h-full w-[280px] bg-surface-container border-r border-outline-variant flex flex-col p-4 gap-2 z-50">
+<div class="mb-8 px-4 flex items-center gap-3">
+<div class="w-10 h-10 bg-primary-container rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-on-primary-container">account_balance</span>
+</div>
+<div>
+<h1 class="font-headline-md text-headline-md font-bold text-primary">TaxPro Academy</h1>
+<p class="text-[10px] text-on-surface-variant opacity-70">Simulator v2.4</p>
+</div>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 bg-secondary-container text-on-secondary-container rounded-xl font-bold transition-transform active:scale-95" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-body-sm text-body-sm">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-variant rounded-xl transition-colors duration-300" href="#">
+<span class="material-symbols-outlined">menu_book</span>
+<span class="font-body-sm text-body-sm">Modules</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-variant rounded-xl transition-colors duration-300" href="#">
+<span class="material-symbols-outlined">receipt_long</span>
+<span class="font-body-sm text-body-sm">Practice Cases</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-variant rounded-xl transition-colors duration-300" href="#">
+<span class="material-symbols-outlined">quiz</span>
+<span class="font-body-sm text-body-sm">Exams</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-variant rounded-xl transition-colors duration-300" href="#">
+<span class="material-symbols-outlined">smart_toy</span>
+<span class="font-body-sm text-body-sm">AI Assistant</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-variant rounded-xl transition-colors duration-300" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-body-sm text-body-sm">Settings</span>
+</a>
+</nav>
+<div class="mt-auto p-4 rounded-2xl bg-surface-container-high border border-outline-variant">
+<div class="flex items-center gap-3 mb-3">
+<div class="w-10 h-10 rounded-full bg-surface-variant overflow-hidden">
+<img alt="Student Profile Picture" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBxXCP6gmTbQYCSDvUs5sB91B4mbOREaJA3P-IUsYeGd3pSt7TsKFSkkZabPEmBMUZs48Raf5w0645-iKlSH13e0kDXRqAgQRbvkwN_FBmqa4CuEiaQIfRAz5K-rWZLU-L5r9n1whkIaFG3TNCVjMCRNpL_Uce4FVg_MgHCXSUPp5mqYRmg6w2w_O8DxUkpbICZWTz2vJzIB6W6uLo_3cOAMoY9rKB_YUMJJG302zt3nzx35W04MM9T5yJH_XGmdxmE2ula4o9w9zQ"/>
+</div>
+<div>
+<p class="font-label-xs text-label-xs font-bold text-on-surface">Alex Rivera</p>
+<p class="font-label-xs text-label-xs text-on-surface-variant">Tax Associate II</p>
+</div>
+</div>
+<button class="w-full py-2 bg-primary text-on-primary rounded-lg font-bold text-sm transition-transform active:scale-95">Upgrade to Pro</button>
+</div>
+</aside>
+<!-- Top Navigation Bar -->
+<header class="fixed top-0 right-0 w-[calc(100%-280px)] h-[72px] bg-surface-dim/80 backdrop-blur-xl border-b border-outline-variant flex justify-between items-center px-gutter z-40">
+<div class="flex items-center gap-4 flex-1">
+<div class="relative w-96 group focus-within:ring-2 focus-within:ring-primary rounded-xl overflow-hidden bg-surface-container border border-outline-variant transition-all">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="w-full bg-transparent border-none py-2.5 pl-10 pr-4 text-on-surface placeholder:text-on-surface-variant/50 focus:ring-0" placeholder="Search cases, modules, or codes..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="hidden md:flex items-center gap-6">
+<a class="font-label-xs text-label-xs text-on-surface-variant hover:text-primary transition-colors" href="#">Documentation</a>
+<a class="font-label-xs text-label-xs text-on-surface-variant hover:text-primary transition-colors" href="#">Help</a>
+</div>
+<div class="flex items-center gap-2">
+<button class="p-2 text-on-surface-variant hover:bg-surface-variant rounded-full transition-colors relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full border border-surface-dim"></span>
+</button>
+<button class="p-2 text-on-surface-variant hover:bg-surface-variant rounded-full transition-colors">
+<span class="material-symbols-outlined">apps</span>
+</button>
+</div>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="ml-[280px] pt-[72px] p-margin_desktop min-h-screen">
+<!-- Welcome Hero Section -->
+<section class="mb-10 flex flex-col md:flex-row gap-gutter">
+<div class="flex-1 glass-card p-8 rounded-3xl relative overflow-hidden group">
+<!-- Background Decorative Element -->
+<div class="absolute -right-20 -top-20 w-64 h-64 bg-primary/20 blur-[100px] rounded-full group-hover:bg-primary/30 transition-all duration-700"></div>
+<div class="relative z-10">
+<h2 class="font-headline-lg text-headline-lg mb-2">Welcome back, Alex</h2>
+<p class="text-on-surface-variant mb-6 max-w-md">Your compliance mastery is trending upward. Keep up the consistent practice to reach Senior Associate level.</p>
+<div class="flex flex-wrap gap-6">
+<div class="flex items-center gap-4 bg-surface-container-high/50 p-4 rounded-2xl border border-outline-variant">
+<div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">verified</span>
+</div>
+<div>
+<p class="text-[10px] uppercase tracking-wider text-on-surface-variant">Compliance Score</p>
+<p class="text-2xl font-bold text-primary">94%</p>
+</div>
+</div>
+<div class="flex items-center gap-4 bg-surface-container-high/50 p-4 rounded-2xl border border-outline-variant">
+<div class="w-12 h-12 rounded-xl bg-tertiary/10 flex items-center justify-center text-tertiary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">insights</span>
+</div>
+<div>
+<p class="text-[10px] uppercase tracking-wider text-on-surface-variant">Performance</p>
+<p class="text-2xl font-bold text-tertiary">+12% <span class="text-xs font-normal text-on-surface-variant">this month</span></p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Quick Actions Bento -->
+<div class="grid grid-cols-1 gap-4 w-full md:w-80">
+<button class="glass-card p-6 rounded-2xl flex flex-col items-center justify-center gap-3 text-center transition-all hover:bg-primary-container group">
+<div class="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center text-primary group-hover:bg-on-primary group-hover:text-primary-container transition-colors">
+<span class="material-symbols-outlined">add_task</span>
+</div>
+<span class="font-bold text-sm">Start New Practice Case</span>
+</button>
+<button class="glass-card p-6 rounded-2xl flex flex-col items-center justify-center gap-3 text-center transition-all hover:bg-secondary-container group">
+<div class="w-12 h-12 rounded-full bg-secondary/20 flex items-center justify-center text-secondary group-hover:bg-on-secondary group-hover:text-secondary-container transition-colors">
+<span class="material-symbols-outlined">smart_toy</span>
+</div>
+<span class="font-bold text-sm">Open AI Assistant</span>
+</button>
+</div>
+</section>
+<!-- KPI Grid -->
+<section class="grid grid-cols-1 md:grid-cols-3 gap-gutter mb-10">
+<div class="glass-card p-6 rounded-2xl border-l-4 border-l-primary">
+<div class="flex justify-between items-start mb-4">
+<span class="material-symbols-outlined text-primary-fixed-dim">description</span>
+<span class="text-xs font-bold text-primary bg-primary/10 px-2 py-1 rounded">Monthly Goal: 15</span>
+</div>
+<h3 class="text-on-surface-variant text-sm mb-1">GST Returns Completed</h3>
+<p class="text-3xl font-bold">12</p>
+<div class="w-full bg-surface-variant h-1.5 rounded-full mt-4">
+<div class="bg-primary h-full rounded-full" style="width: 80%"></div>
+</div>
+</div>
+<div class="glass-card p-6 rounded-2xl border-l-4 border-l-tertiary">
+<div class="flex justify-between items-start mb-4">
+<span class="material-symbols-outlined text-tertiary">church</span>
+<span class="text-xs font-bold text-tertiary bg-tertiary/10 px-2 py-1 rounded">High Accuracy</span>
+</div>
+<h3 class="text-on-surface-variant text-sm mb-1">Accuracy</h3>
+<p class="text-3xl font-bold">98%</p>
+<div class="w-full bg-surface-variant h-1.5 rounded-full mt-4">
+<div class="bg-tertiary h-full rounded-full" style="width: 98%"></div>
+</div>
+</div>
+<div class="glass-card p-6 rounded-2xl border-l-4 border-l-secondary">
+<div class="flex justify-between items-start mb-4">
+<span class="material-symbols-outlined text-secondary">timer</span>
+<span class="text-xs font-bold text-secondary bg-secondary/10 px-2 py-1 rounded">+5h this week</span>
+</div>
+<h3 class="text-on-surface-variant text-sm mb-1">Practice Hours</h3>
+<p class="text-3xl font-bold">45h</p>
+<div class="w-full bg-surface-variant h-1.5 rounded-full mt-4">
+<div class="bg-secondary h-full rounded-full" style="width: 65%"></div>
+</div>
+</div>
+</section>
+<!-- Dynamic Content Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter items-start">
+<!-- Left Column: Activity & Deadlines -->
+<div class="lg:col-span-8 space-y-gutter">
+<!-- Recent Activity -->
+<div class="glass-card rounded-3xl p-6">
+<div class="flex justify-between items-center mb-6">
+<h3 class="font-headline-md text-headline-md">Recent Activity</h3>
+<button class="text-primary text-sm font-bold hover:underline">View All</button>
+</div>
+<div class="space-y-4">
+<div class="flex items-center gap-4 p-4 rounded-2xl bg-surface-container-high/30 border border-outline-variant hover:bg-surface-container-high transition-colors">
+<div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">analytics</span>
+</div>
+<div class="flex-1">
+<h4 class="font-bold text-sm">Solved GST Case Study #4</h4>
+<p class="text-xs text-on-surface-variant">Completed with 99.4% accuracy • 2 hours ago</p>
+</div>
+<div class="text-xs font-bold text-primary">+450 XP</div>
+</div>
+<div class="flex items-center gap-4 p-4 rounded-2xl bg-surface-container-high/30 border border-outline-variant hover:bg-surface-container-high transition-colors">
+<div class="w-10 h-10 rounded-full bg-tertiary/10 flex items-center justify-center text-tertiary">
+<span class="material-symbols-outlined">quiz</span>
+</div>
+<div class="flex-1">
+<h4 class="font-bold text-sm">Completed TDS Quiz</h4>
+<p class="text-xs text-on-surface-variant">Assessment on Non-resident Payments • Yesterday</p>
+</div>
+<div class="text-xs font-bold text-tertiary">+200 XP</div>
+</div>
+</div>
+</div>
+<!-- Upcoming Deadlines -->
+<div class="glass-card rounded-3xl p-6">
+<h3 class="font-headline-md text-headline-md mb-6">Upcoming Deadlines</h3>
+<div class="space-y-4">
+<div class="flex items-center gap-4 p-5 rounded-2xl bg-error-container/20 border border-error/30">
+<div class="w-12 h-12 rounded-xl bg-error/10 flex items-center justify-center text-error">
+<span class="material-symbols-outlined">event_busy</span>
+</div>
+<div class="flex-1">
+<h4 class="font-bold text-sm">GSTR-1 Practice Submission</h4>
+<p class="text-xs text-on-surface-variant">Monthly filing simulation for Enterprise Case B</p>
+</div>
+<div class="text-right">
+<p class="text-sm font-bold text-error">Due in 2 days</p>
+<p class="text-[10px] text-on-surface-variant">Oct 24, 2023</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Column: Progress Charts -->
+<div class="lg:col-span-4 space-y-gutter">
+<div class="glass-card rounded-3xl p-6">
+<h3 class="font-headline-md text-headline-md mb-6">Module Progress</h3>
+<div class="space-y-6">
+<div>
+<div class="flex justify-between text-sm mb-2">
+<span class="font-bold">GST Mastery</span>
+<span class="text-primary font-bold">88%</span>
+</div>
+<div class="w-full bg-surface-variant h-2 rounded-full">
+<div class="bg-primary h-full rounded-full" style="width: 88%"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between text-sm mb-2">
+<span class="font-bold">TDS Compliance</span>
+<span class="text-tertiary font-bold">62%</span>
+</div>
+<div class="w-full bg-surface-variant h-2 rounded-full">
+<div class="bg-tertiary h-full rounded-full" style="width: 62%"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between text-sm mb-2">
+<span class="font-bold">ITR Filing</span>
+<span class="text-secondary font-bold">45%</span>
+</div>
+<div class="w-full bg-surface-variant h-2 rounded-full">
+<div class="bg-secondary h-full rounded-full" style="width: 45%"></div>
+</div>
+</div>
+</div>
+<div class="mt-10 pt-10 border-t border-outline-variant relative">
+<h4 class="font-bold text-sm mb-4">Training Roadmap</h4>
+<div class="relative pl-6 space-y-6 border-l border-outline-variant ml-2">
+<div class="relative">
+<div class="absolute -left-[31px] top-1 w-4 h-4 rounded-full bg-primary ring-4 ring-primary/20"></div>
+<p class="text-xs font-bold text-on-surface">Advanced Corporate Tax</p>
+<p class="text-[10px] text-on-surface-variant">Unlocks at Level 15</p>
+</div>
+<div class="relative opacity-40">
+<div class="absolute -left-[31px] top-1 w-4 h-4 rounded-full bg-surface-variant"></div>
+<p class="text-xs font-bold text-on-surface">Audit Simulation</p>
+<p class="text-[10px] text-on-surface-variant">Unlocks at Level 22</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Mini Calculator Tool Card -->
+<div class="glass-card rounded-3xl p-6 bg-gradient-to-br from-primary-container/20 to-transparent">
+<div class="flex items-center gap-3 mb-4">
+<span class="material-symbols-outlined text-primary">calculate</span>
+<h4 class="font-bold text-sm">Quick Tax Calc</h4>
+</div>
+<div class="space-y-3">
+<input class="w-full bg-surface-container-high border border-outline-variant rounded-xl px-4 py-2 text-sm focus:ring-1 focus:ring-primary outline-none" placeholder="Enter Amount" type="number"/>
+<select class="w-full bg-surface-container-high border border-outline-variant rounded-xl px-4 py-2 text-sm focus:ring-1 focus:ring-primary outline-none">
+<option>GST 18%</option>
+<option>GST 12%</option>
+<option>GST 28%</option>
+</select>
+<button class="w-full py-2 bg-primary/20 text-primary border border-primary/30 rounded-xl font-bold text-xs hover:bg-primary hover:text-on-primary transition-colors">Calculate Impact</button>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Background Shader Overlay (Subtle Atmospheric Effect) -->
+<div class="fixed inset-0 pointer-events-none -z-10 opacity-30">
+<div class="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_20%_20%,#2563eb1a_0%,transparent_50%)]"></div>
+<div class="absolute bottom-0 right-0 w-full h-full bg-[radial-gradient(circle_at_80%_80%,#6001d11a_0%,transparent_50%)]"></div>
+</div>
+<script>
+        // Simple logic for interactive elements
+        document.querySelectorAll('button, a').forEach(el => {
+            el.addEventListener('mousedown', () => {
+                el.classList.add('scale-95');
+            });
+            el.addEventListener('mouseup', () => {
+                el.classList.remove('scale-95');
+            });
+            el.addEventListener('mouseleave', () => {
+                el.classList.remove('scale-95');
+            });
+        });
+
+        // Search bar interaction
+        const searchInput = document.querySelector('input[type="text"]');
+        searchInput.addEventListener('focus', () => {
+            searchInput.parentElement.classList.add('border-primary');
+        });
+        searchInput.addEventListener('blur', () => {
+            searchInput.parentElement.classList.remove('border-primary');
+        });
+    </script>
+</body></html>
