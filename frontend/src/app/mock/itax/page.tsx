@@ -74,7 +74,7 @@ export default function MockITaxPortal() {
       if (res.ok) {
         setCaseId(data.case_id);
       } else {
-        toast.error(extractError(data.detail || "Error creating case. Check PAN format (e.g. ABCDE1234F)).");
+        toast.error(extractError(data.detail || "Error creating case. Check PAN format (e.g. ABCDE1234F)."));
       }
     } catch (e) {
       console.error(e);

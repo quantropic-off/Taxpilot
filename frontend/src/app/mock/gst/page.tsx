@@ -65,7 +65,7 @@ export default function MockGSTPortal() {
       if (res.ok) {
         setCaseId(data.case_id);
       } else {
-        toast.error(extractError(data.detail || "Error creating case. Check GSTIN format (e.g. 27ABCDE1234F1Z5)).");
+        toast.error(extractError(data.detail || "Error creating case. Check GSTIN format (e.g. 27ABCDE1234F1Z5)."));
       }
     } catch (e) {
       console.error(e);
