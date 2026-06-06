@@ -22,7 +22,7 @@ services:
   backend:
     build: ./backend
     ports:
-      - "8000:8000"
+      - "7860:7860"
     environment:
       - DATABASE_URL=postgresql://taxpro:taxpro_password@db:5432/taxpro_db
       - CELERY_BROKER_URL=redis://redis:6379/0
