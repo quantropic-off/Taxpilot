@@ -15,6 +15,7 @@ class StudentBase(BaseModel):
     email: EmailStr
     mobile: Optional[str] = None
     dob: Optional[date] = None
+    enrollment_date: Optional[date] = None
     course_id: Optional[int] = None
     batch_id: Optional[int] = None
     status: str = "Active"

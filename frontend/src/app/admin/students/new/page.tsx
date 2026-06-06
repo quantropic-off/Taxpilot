@@ -15,7 +15,7 @@ export default function NewStudent() {
     email: "",
     password: "",
     mobile: "",
-    dob: "",
+    enrollment_date: "",
     status: "Active"
   });
 
@@ -87,8 +87,8 @@ export default function NewStudent() {
                   <input value={formData.mobile} onChange={e => setFormData({...formData, mobile: e.target.value})} className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" placeholder="+91 9876543210" />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[13px] font-medium leading-none text-foreground/80">Date of Birth</label>
-                  <input type="date" value={formData.dob} onChange={e => setFormData({...formData, dob: e.target.value})} className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" />
+                  <label className="text-[13px] font-medium leading-none text-foreground/80">Date of Joining</label>
+                  <input type="date" value={formData.enrollment_date} onChange={e => setFormData({...formData, enrollment_date: e.target.value})} className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" />
                 </div>
               </div>
             </div>
