@@ -38,7 +38,7 @@ export default function GSTPractice() {
     // Auto-initialize a practice case
     const initCase = async () => {
       try {
-        const res = await fetch("https://skandaedutech-taxpilot.hf.space/api/v1/gst/cases", {
+        const res = await fetch("/_/backend/api/v1/gst/cases", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -94,7 +94,7 @@ export default function GSTPractice() {
     // Push to backend if valid
     if (validationErrors.length === 0) {
       try {
-        await fetch(`https://skandaedutech-taxpilot.hf.space/api/v1/gst/cases/${caseId}/invoices`, {
+        await fetch(`/_/backend/api/v1/gst/cases/${caseId}/invoices`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -124,7 +124,7 @@ export default function GSTPractice() {
     setIsTyping(true);
 
     try {
-      const res = await fetch("https://skandaedutech-taxpilot.hf.space/api/v1/ai/chat", {
+      const res = await fetch("/_/backend/api/v1/ai/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

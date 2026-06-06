@@ -7,7 +7,7 @@ export default function AdminDashboard() {
   const [stats, setStats] = useState<any[]>([]);
 
   useEffect(() => {
-    fetch("https://skandaedutech-taxpilot.hf.space/api/v1/admin/students/stats")
+    fetch("/_/backend/api/v1/admin/students/stats")
       .then(res => res.json())
       .then(data => setStats(data.data || []))
       .catch(console.error);
