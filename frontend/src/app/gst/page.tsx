@@ -85,7 +85,7 @@ export default function GSTPractice() {
     setErrors(validationErrors);
 
     if (validationErrors.length === 0) {
-      setAiMessage("Great job! That invoice passes all GST structural validations. You can add more, or push this to the e-Filing portal.");
+      setChatMessages(prev => [...prev, { role: "assistant", content: "Great job! That invoice passes all GST structural validations. You can add more, or push this to the e-Filing portal." }]);
     }
 
     // Always save locally so the student can see their mistakes
