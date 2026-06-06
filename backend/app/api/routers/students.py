@@ -119,21 +119,33 @@ def delete_student(student_id: int, db: Session = Depends(get_db)):
     
     from database.models import GSTPracticeCase, TDSPracticeCase, ITRPracticeCase
     
-    # Delete child cases properly to trigger cascade for their entries
-    gst_cases = db.query(GSTPracticeCase).filter(GSTPracticeCase.student_id == str(student_id)).all()
-    for gc in gst_cases:
+    # Get all practice cases for this student
+    practice_cases = db.query(PracticeCase).filter(PracticeCase.student_id == student_id).all()
+    pc_ids = [pc.id for pc in practice_cases]
+    
+    # Delete child cases matching EITHER student_id string OR linked to the practice cases
+    # We use .all() and loop over them to trigger cascade delete for their entries
+    gst_query = db.query(GSTPracticeCase).filter(GSTPracticeCase.student_id == str(student_id))
+    if pc_ids:
+        gst_query = db.query(GSTPracticeCase).filter((GSTPracticeCase.student_id == str(student_id)) | (GSTPracticeCase.practice_case_id.in_(pc_ids)))
+    for gc in gst_query.all():
         db.delete(gc)
         
-    tds_cases = db.query(TDSPracticeCase).filter(TDSPracticeCase.student_id == str(student_id)).all()
-    for tc in tds_cases:
+    tds_query = db.query(TDSPracticeCase).filter(TDSPracticeCase.student_id == str(student_id))
+    if pc_ids:
+        tds_query = db.query(TDSPracticeCase).filter((TDSPracticeCase.student_id == str(student_id)) | (TDSPracticeCase.practice_case_id.in_(pc_ids)))
+    for tc in tds_query.all():
         db.delete(tc)
         
-    itr_cases = db.query(ITRPracticeCase).filter(ITRPracticeCase.student_id == str(student_id)).all()
-    for ic in itr_cases:
+    itr_query = db.query(ITRPracticeCase).filter(ITRPracticeCase.student_id == str(student_id))
+    if pc_ids:
+        itr_query = db.query(ITRPracticeCase).filter((ITRPracticeCase.student_id == str(student_id)) | (ITRPracticeCase.practice_case_id.in_(pc_ids)))
+    for ic in itr_query.all():
         db.delete(ic)
     
-    # We should also delete associated practice cases
-    db.query(PracticeCase).filter(PracticeCase.student_id == student_id).delete(synchronize_session=False)
+    # Now safely delete the parent practice cases
+    for pc in practice_cases:
+        db.delete(pc)
     
     db.delete(student)
     
