@@ -1,7 +1,9 @@
 "use client";
+import { toast } from "sonner";
+import { extractError } from "@/lib/utils";
 import AppLayout from "@/components/layout/AppLayout";
 import { FileCheck2, Plus, FileText, CheckCircle } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function MockTracesPortal() {
   const [caseId, setCaseId] = useState<number | null>(null);
@@ -25,6 +27,28 @@ export default function MockTracesPortal() {
   const [challanJson, setChallanJson] = useState<any>(null);
   const [prn, setPrn] = useState<string | null>(null);
 
+  useEffect(() => {
+    const savedDeductions = localStorage.getItem('mock_tds_deductions');
+    if (savedDeductions) {
+      try {
+        const parsed = JSON.parse(savedDeductions);
+        const mapped = parsed.map((d: any) => {
+           if ('tds_amount' in d) return d;
+           let rate = 10;
+           if (d.section_code === "194C") rate = 1;
+           const tax = d.payment_amount * (rate / 100);
+           return { ...d, tax_rate: rate, tds_amount: tax };
+        });
+        setDeductions(mapped);
+      } catch(e) {}
+    }
+    const savedCaseId = localStorage.getItem('mock_tds_caseId');
+    if (savedCaseId) {
+      setCaseId(Number(savedCaseId));
+      setCaseData(prev => ({ ...prev, deductor_tan: "DELT12345F", deductor_pan: "ABCDE1234F" }));
+    }
+  }, []);
+
   const handleCreateCase = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
@@ -37,7 +61,7 @@ export default function MockTracesPortal() {
       if (res.ok) {
         setCaseId(data.case_id);
       } else {
-        alert(data.detail || "Error creating case. Check TAN/PAN format.");
+        toast.error(extractError(data.detail || "Error creating case. Check TAN/PAN format."));
       }
     } catch (e) {
       console.error(e);
@@ -45,7 +69,7 @@ export default function MockTracesPortal() {
   };
 
   const handleAddDeduction = async () => {
-    if (!caseId) return alert("Create a case first!");
+    if (!caseId) return toast.error(extractError("Create a case first!"));
     try {
       const res = await fetch(`https://skandaedutech-taxpilot.hf.space/api/v1/tds/cases/${caseId}/deductions`, {
         method: "POST",
@@ -61,7 +85,7 @@ export default function MockTracesPortal() {
         const tax = newDeduction.payment_amount * (rate / 100);
         setDeductions([...deductions, { ...newDeduction, id: data.deduction_id, tax_rate: rate, tds_amount: tax }]);
       } else {
-        alert(data.detail || "Error adding deduction.");
+        toast.error(extractError(data.detail || "Error adding deduction."));
       }
     } catch (e) {
       console.error(e);

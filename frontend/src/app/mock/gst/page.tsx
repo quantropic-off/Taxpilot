@@ -1,7 +1,9 @@
 "use client";
+import { toast } from "sonner";
+import { extractError } from "@/lib/utils";
 import AppLayout from "@/components/layout/AppLayout";
 import { ShieldCheck, FileText, CheckCircle, Plus } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function MockGSTPortal() {
   const [caseId, setCaseId] = useState<number | null>(null);
@@ -26,6 +28,31 @@ export default function MockGSTPortal() {
   const [arn, setArn] = useState<string | null>(null);
   const [gstr1Json, setGstr1Json] = useState<any>(null);
 
+  useEffect(() => {
+    const savedInvoices = localStorage.getItem('mock_gst_invoices');
+    if (savedInvoices) {
+      try {
+        const parsed = JSON.parse(savedInvoices);
+        const withTaxes = parsed.map((inv: any) => {
+          if ('cgst' in inv) return inv;
+          const tax = inv.taxable_value * (inv.tax_rate / 100);
+          return {
+            ...inv,
+            cgst: tax / 2,
+            sgst: tax / 2,
+            igst: 0
+          };
+        });
+        setInvoices(withTaxes);
+      } catch(e) {}
+    }
+    const savedCaseId = localStorage.getItem('mock_gst_caseId');
+    if (savedCaseId) {
+      setCaseId(Number(savedCaseId));
+      setCaseData(prev => ({ ...prev, gstin: "27ABCDE1234F1Z5", place_of_supply: "27" }));
+    }
+  }, []);
+
   const handleCreateCase = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
@@ -38,7 +65,7 @@ export default function MockGSTPortal() {
       if (res.ok) {
         setCaseId(data.case_id);
       } else {
-        alert(data.detail || "Error creating case. Check GSTIN format (e.g. 27ABCDE1234F1Z5).");
+        toast.error(extractError(data.detail || "Error creating case. Check GSTIN format (e.g. 27ABCDE1234F1Z5)).");
       }
     } catch (e) {
       console.error(e);
@@ -46,7 +73,7 @@ export default function MockGSTPortal() {
   };
 
   const handleAddInvoice = async () => {
-    if (!caseId) return alert("Create a case first!");
+    if (!caseId) return toast.error(extractError("Create a case first!"));
     try {
       const res = await fetch(`https://skandaedutech-taxpilot.hf.space/api/v1/gst/cases/${caseId}/invoices`, {
         method: "POST",

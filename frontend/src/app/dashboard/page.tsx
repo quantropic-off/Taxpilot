@@ -14,7 +14,19 @@ const quickLinks = [
   { name: "e-Filing Portal", desc: "ITR computation, Old vs New", href: "/mock/itax", icon: Landmark, accent: "border-l-indigo-500" },
 ];
 
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/context/AuthContext";
+
 export default function Dashboard() {
+  const { user } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (user && user.role !== "admin") {
+      router.push("/gst");
+    }
+  }, [user, router]);
+
   const [stats, setStats] = useState({
     students: 0,
     gst_cases: 0,

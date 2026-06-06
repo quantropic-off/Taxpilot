@@ -10,6 +10,9 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [loadingText, setLoadingText] = useState("Authenticating...");
+  const [progress, setProgress] = useState(0);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,17 +28,77 @@ export default function LoginPage() {
 
       const data = await res.json();
       if (res.ok) {
-        login(data.user);
+        setIsSuccess(true);
+        setLoadingText("Authenticating Secure Identity...");
+        
+        let currentProgress = 0;
+        const interval = setInterval(() => {
+          currentProgress += 1.5;
+          if (currentProgress <= 100) setProgress(currentProgress);
+        }, 45);
+
+        setTimeout(() => setLoadingText("Provisioning Mock Practice Portals..."), 1000);
+        setTimeout(() => setLoadingText("Initializing Taxpilot Workspace..."), 2000);
+        setTimeout(() => {
+          clearInterval(interval);
+          login(data.user);
+        }, 3000);
       } else {
         setError(data.detail || "Invalid email or password");
+        setLoading(false);
       }
     } catch (err) {
       console.error(err);
       setError("An error occurred while logging in.");
-    } finally {
       setLoading(false);
     }
   };
+
+  if (isSuccess) {
+    return (
+      <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center p-4 relative overflow-hidden">
+        {/* Ambient Background Glow */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-blue-600/20 rounded-full blur-[120px] pointer-events-none"></div>
+        
+        <div className="flex flex-col items-center space-y-12 max-w-sm w-full z-10">
+          <div className="relative flex items-center justify-center">
+            {/* Orbital Rings */}
+            <div className="absolute inset-[-50px] border border-blue-500/10 rounded-full animate-[spin_8s_linear_infinite]"></div>
+            <div className="absolute inset-[-30px] border border-blue-400/30 rounded-full animate-[spin_4s_linear_infinite_reverse] border-t-blue-500"></div>
+            
+            {/* Core Logo Matrix */}
+            <div className="h-24 w-24 bg-gradient-to-br from-blue-600 to-indigo-800 rounded-[20px] flex items-center justify-center shadow-[0_0_50px_rgba(37,99,235,0.5)] relative z-10 transition-all duration-700 ease-in-out scale-100">
+              <div className="absolute inset-0 bg-white/10 rounded-[20px] animate-pulse"></div>
+              <Landmark className="h-10 w-10 text-white" strokeWidth={1.5} />
+            </div>
+          </div>
+          
+          <div className="text-center space-y-8 w-full px-4">
+            <h2 className="text-3xl font-extrabold text-white tracking-wide uppercase text-transparent bg-clip-text bg-gradient-to-r from-blue-100 to-indigo-200">
+              Taxpilot
+            </h2>
+            
+            <div className="space-y-4">
+              {/* Sleek Progress Bar */}
+              <div className="w-full bg-slate-800/80 rounded-full h-1.5 overflow-hidden backdrop-blur-md border border-slate-700/50">
+                <div 
+                  className="bg-gradient-to-r from-blue-500 to-indigo-500 h-full rounded-full transition-all duration-75 ease-linear shadow-[0_0_10px_rgba(59,130,246,0.8)]"
+                  style={{ width: `${progress}%` }}
+                ></div>
+              </div>
+              
+              {/* Typewriter status text */}
+              <div className="h-6 flex items-center justify-center">
+                <p className="text-blue-300/80 font-medium text-sm tracking-widest uppercase transition-opacity duration-300">
+                  {loadingText}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4">

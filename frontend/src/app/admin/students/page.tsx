@@ -6,6 +6,39 @@ import { useEffect, useState } from "react";
 
 export default function StudentList() {
   const [students, setStudents] = useState<any[]>([]);
+  const [activeMenu, setActiveMenu] = useState<string | null>(null);
+  const [studentToDelete, setStudentToDelete] = useState<string | null>(null);
+  const [notification, setNotification] = useState<{ message: string; type: "error" | "success" } | null>(null);
+
+  const showNotification = (message: string, type: "error" | "success" = "error") => {
+    setNotification({ message, type });
+    setTimeout(() => setNotification(null), 4000);
+  };
+
+  const promptDelete = (id: string) => {
+    setStudentToDelete(id);
+    setActiveMenu(null);
+  };
+
+  const confirmDelete = async () => {
+    if (!studentToDelete) return;
+    const id = studentToDelete;
+    setStudentToDelete(null);
+    try {
+      const res = await fetch(`https://skandaedutech-taxpilot.hf.space/api/v1/students/${id}`, {
+        method: "DELETE"
+      });
+      if (res.ok) {
+        setStudents(prev => prev.filter(s => s.id !== id));
+        showNotification("Student deleted successfully.", "success");
+      } else {
+        showNotification("Failed to delete student.", "error");
+      }
+    } catch (e) {
+      console.error(e);
+      showNotification("Error deleting student.", "error");
+    }
+  };
 
   useEffect(() => {
     fetch("https://skandaedutech-taxpilot.hf.space/api/v1/students/")
@@ -71,9 +104,27 @@ export default function StudentList() {
                       </div>
                     </td>
                     <td className="p-4 align-middle">
-                      <button className="h-8 w-8 inline-flex items-center justify-center rounded-md hover:bg-accent hover:text-accent-foreground text-muted-foreground">
-                        <MoreVertical className="h-4 w-4" />
-                      </button>
+                      <div className="relative">
+                        <button 
+                          onClick={() => setActiveMenu(activeMenu === s.id ? null : s.id)}
+                          className="h-8 w-8 inline-flex items-center justify-center rounded-md hover:bg-accent hover:text-accent-foreground text-muted-foreground"
+                        >
+                          <MoreVertical className="h-4 w-4" />
+                        </button>
+                        {activeMenu === s.id && (
+                          <div className="absolute right-0 mt-1 w-40 bg-card border border-border/40 rounded-md shadow-lg z-50 py-1 text-sm overflow-hidden">
+                            <Link href={`/admin/students/${s.id}`} className="block px-4 py-2 text-foreground/80 hover:bg-muted/50 hover:text-foreground">
+                              Track Performance
+                            </Link>
+                            <button 
+                              onClick={() => promptDelete(s.id)}
+                              className="block w-full text-left px-4 py-2 text-red-500 hover:bg-red-500/10"
+                            >
+                              Delete Student
+                            </button>
+                          </div>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -90,6 +141,41 @@ export default function StudentList() {
           </div>
         </div>
       </div>
+
+      {studentToDelete && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+          <div className="bg-card border border-border/40 rounded-lg shadow-lg w-full max-w-md p-6">
+            <h2 className="text-lg font-semibold text-foreground mb-2">Delete Student</h2>
+            <p className="text-muted-foreground text-sm mb-6">
+              Are you sure you want to delete this student? This action cannot be undone.
+            </p>
+            <div className="flex justify-end gap-3">
+              <button 
+                onClick={() => setStudentToDelete(null)}
+                className="px-4 py-2 rounded-md border border-input bg-background hover:bg-accent hover:text-accent-foreground text-sm font-medium transition-colors"
+              >
+                Cancel
+              </button>
+              <button 
+                onClick={confirmDelete}
+                className="px-4 py-2 rounded-md bg-red-600 text-white hover:bg-red-700 text-sm font-medium transition-colors shadow"
+              >
+                Delete Student
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {notification && (
+        <div className={`fixed bottom-4 right-4 px-4 py-3 rounded-md shadow-lg border text-sm font-medium animate-in slide-in-from-bottom-5 fade-in duration-300 z-50 flex items-center gap-2 ${
+          notification.type === 'error' 
+            ? 'bg-red-50 border-red-200 text-red-800 dark:bg-red-950/50 dark:border-red-900 dark:text-red-300' 
+            : 'bg-emerald-50 border-emerald-200 text-emerald-800 dark:bg-emerald-950/50 dark:border-emerald-900 dark:text-emerald-300'
+        }`}>
+          <span>{notification.message}</span>
+        </div>
+      )}
     </AppLayout>
   );
 }

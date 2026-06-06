@@ -1,9 +1,12 @@
 "use client";
+import { toast } from "sonner";
+import { extractError } from "@/lib/utils";
 import AppLayout from "@/components/layout/AppLayout";
-import { Landmark, FileCheck2, AlertCircle, Upload, MessageSquare, Plus, ArrowRight } from "lucide-react";
+import { Landmark, FileCheck2, AlertCircle, Upload, Plus, ArrowRight } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function ITRPractice() {
   const { user } = useAuth();
@@ -18,8 +21,9 @@ export default function ITRPractice() {
   const [newInc, setNewInc] = useState({ head: "Salary", amount: 0 });
   const [newDed, setNewDed] = useState({ section: "80C", amount: 0 });
 
-  // AI Tutor State
-  const [aiMessage, setAiMessage] = useState("Welcome to ITR Preparation. Start by declaring your Heads of Income. Remember, you can claim deductions, but they are capped by legal limits!");
+
+  const [isPushing, setIsPushing] = useState(false);
+  const router = useRouter();
 
   const [activeTab, setActiveTab] = useState('Income Sources');
 
@@ -54,24 +58,27 @@ export default function ITRPractice() {
 
     if (sumIncome < 0) {
       errs.push({ id: "NEGATIVE_INCOME", msg: "Gross Total Income cannot be negative for ITR-1." });
-      setAiMessage("ITR-1 is for simple incomes. You cannot have a net negative income. Please check your entries.");
+
     }
     
     if (sec80C > 150000) {
       // Soft Warning, but we'll flag it as an error to show the feature
       errs.push({ id: "80C_LIMIT", msg: "Section 80C deduction claimed exceeds ₹1,50,000." });
-      setAiMessage(`I noticed you claimed ₹${sec80C.toLocaleString()} under Section 80C. The legal maximum is ₹1,50,000. The e-Filing portal will automatically restrict your claim to ₹1.5L when computing taxes!`);
+
     }
 
     if (errs.length === 0 && (currentIncomes.length > 0 || currentDeds.length > 0)) {
-      setAiMessage("Your entries look structurally sound! The data is clean. You can push this to the e-Filing portal to compute the final tax liability.");
+
     }
 
     return errs;
   };
 
   const handleAddIncome = () => {
-    if (newInc.amount <= 0) return;
+    if (newInc.amount <= 0) {
+      toast.error(extractError("Please enter a valid amount."));
+      return;
+    }
     const nextInc = [...incomes, newInc];
     setIncomes(nextInc);
     setErrors(validateState(nextInc, deductions));
@@ -79,7 +86,10 @@ export default function ITRPractice() {
   };
 
   const handleAddDeduction = () => {
-    if (newDed.amount <= 0) return;
+    if (newDed.amount <= 0) {
+      toast.error(extractError("Please enter a valid amount."));
+      return;
+    }
     
     // Check if section already exists, update it if so
     const existingIdx = deductions.findIndex(d => d.section === newDed.section);
@@ -96,6 +106,20 @@ export default function ITRPractice() {
     setNewDed({ section: "80C", amount: 0 });
   };
 
+
+
+  const handleImportForm16 = () => {
+    setIncomes(prev => [...prev, { head: "Salary", amount: 850000 }]);
+    setDeductions(prev => {
+      const nextDed = [...prev];
+      const existing80C = nextDed.findIndex(d => d.section === "80C");
+      if (existing80C >= 0) nextDed[existing80C].amount += 150000;
+      else nextDed.push({ section: "80C", amount: 150000 });
+      return nextDed;
+    });
+    setErrors([]);
+  };
+
   return (
     <AppLayout>
       <div className="flex flex-col gap-5 h-[calc(100vh-120px)]">
@@ -106,12 +130,26 @@ export default function ITRPractice() {
             <p className="text-[13px] text-gray-500 mt-0.5">Prepare Heads of Income, Claim Deductions, and sync to e-Filing.</p>
           </div>
           <div className="flex gap-3">
-            <button className="text-[13px] font-medium bg-white border border-gray-200 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-50 transition-colors flex items-center gap-2">
+            <button onClick={handleImportForm16} className="text-[13px] font-medium bg-white border border-gray-200 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-50 transition-colors flex items-center gap-2">
               <Upload className="h-4 w-4" /> Import Form 16
             </button>
-            <Link href="/mock/itax" className={`text-[13px] font-medium px-4 py-2 rounded-md flex items-center gap-2 transition-colors ${incomes.length > 0 && errors.length === 0 ? "bg-amber-600 text-white hover:bg-amber-700" : "bg-gray-100 text-gray-400 cursor-not-allowed pointer-events-none"}`}>
-              <ArrowRight className="h-4 w-4" /> Push to e-Filing Portal
-            </Link>
+            <button 
+              onClick={() => {
+                setIsPushing(true);
+                localStorage.setItem('mock_itr_incomes', JSON.stringify(incomes));
+                localStorage.setItem('mock_itr_deductions', JSON.stringify(deductions));
+                if (caseId) localStorage.setItem('mock_itr_caseId', caseId.toString());
+                setTimeout(() => router.push("/mock/itax"), 1500);
+              }}
+              disabled={isPushing || incomes.length === 0 || errors.length > 0}
+              className={`text-[13px] font-medium px-4 py-2 rounded-md flex items-center gap-2 transition-colors ${incomes.length > 0 && errors.length === 0 ? "bg-amber-600 text-white hover:bg-amber-700" : "bg-gray-100 text-gray-400 cursor-not-allowed pointer-events-none"}`}
+            >
+              {isPushing ? (
+                <><span className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> Pushing...</>
+              ) : (
+                <><ArrowRight className="h-4 w-4" /> Push to e-Filing Portal</>
+              )}
+            </button>
           </div>
         </div>
 
@@ -143,21 +181,21 @@ export default function ITRPractice() {
                   <div className="space-y-4">
                     <div>
                       <label className="block text-[11px] font-semibold text-gray-500 uppercase tracking-wider mb-1">PAN</label>
-                      <input type="text" value="ABCDE1234F" disabled className="w-full bg-gray-50 border border-gray-200 rounded p-2 text-[13px] font-medium text-gray-900" />
+                      <input type="text" value="" disabled className="w-full bg-gray-50 border border-gray-200 rounded p-2 text-[13px] font-medium text-gray-900" />
                     </div>
                     <div>
                       <label className="block text-[11px] font-semibold text-gray-500 uppercase tracking-wider mb-1">Full Name</label>
-                      <input type="text" value="John Doe" disabled className="w-full bg-gray-50 border border-gray-200 rounded p-2 text-[13px] font-medium text-gray-900" />
+                      <input type="text" value="" disabled className="w-full bg-gray-50 border border-gray-200 rounded p-2 text-[13px] font-medium text-gray-900" />
                     </div>
                   </div>
                   <div className="space-y-4">
                     <div>
                       <label className="block text-[11px] font-semibold text-gray-500 uppercase tracking-wider mb-1">Aadhaar Number</label>
-                      <input type="text" value="XXXX-XXXX-1234" disabled className="w-full bg-gray-50 border border-gray-200 rounded p-2 text-[13px] font-medium text-gray-900" />
+                      <input type="text" value="" disabled className="w-full bg-gray-50 border border-gray-200 rounded p-2 text-[13px] font-medium text-gray-900" />
                     </div>
                     <div>
                       <label className="block text-[11px] font-semibold text-gray-500 uppercase tracking-wider mb-1">Date of Birth</label>
-                      <input type="text" value="01-01-1980" disabled className="w-full bg-gray-50 border border-gray-200 rounded p-2 text-[13px] font-medium text-gray-900" />
+                      <input type="text" value="" disabled className="w-full bg-gray-50 border border-gray-200 rounded p-2 text-[13px] font-medium text-gray-900" />
                     </div>
                   </div>
                 </div>
@@ -179,7 +217,7 @@ export default function ITRPractice() {
                       </div>
                     ))}
                     <div className="flex gap-2">
-                      <select className="flex-1 text-[13px] p-2 border border-gray-300 rounded focus:ring-1 focus:ring-amber-500 outline-none" value={newInc.head} onChange={e => setNewInc({...newInc, head: e.target.value})}>
+                      <select className="flex-1 text-[13px] p-2 pr-8 border border-gray-300 rounded focus:ring-1 focus:ring-amber-500 outline-none truncate" value={newInc.head} onChange={e => setNewInc({...newInc, head: e.target.value})}>
                         <option>Salary</option>
                         <option>House Property</option>
                         <option>Other Sources</option>
@@ -209,7 +247,7 @@ export default function ITRPractice() {
                       </div>
                     ))}
                     <div className="flex gap-2">
-                      <select className="flex-1 text-[13px] p-2 border border-gray-300 rounded focus:ring-1 focus:ring-amber-500 outline-none" value={newDed.section} onChange={e => setNewDed({...newDed, section: e.target.value})}>
+                      <select className="flex-1 text-[13px] p-2 pr-8 border border-gray-300 rounded focus:ring-1 focus:ring-amber-500 outline-none truncate" value={newDed.section} onChange={e => setNewDed({...newDed, section: e.target.value})}>
                         <option>80C</option>
                         <option>80D</option>
                         <option>80G</option>
@@ -278,36 +316,7 @@ export default function ITRPractice() {
               </div>
             </div>
 
-            {/* AI Tutor Chat */}
-            <div className="flex-1 min-h-[250px] bg-white border border-gray-200 rounded-lg shadow-sm flex flex-col overflow-hidden">
-              <div className="bg-amber-600 text-white p-3 flex items-center gap-3">
-                <div className="p-1.5 bg-white/20 rounded-md">
-                  <MessageSquare className="h-4 w-4" />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-[13px]">Taxpilot AI Tutor</h3>
-                  <p className="text-[10px] text-amber-100">Live Context Engine</p>
-                </div>
-              </div>
-              <div className="flex-1 p-4 overflow-y-auto bg-gray-50/50">
-                <div className="flex gap-3">
-                  <div className="h-7 w-7 rounded-full bg-amber-100 flex items-center justify-center shrink-0">
-                    <MessageSquare className="h-3.5 w-3.5 text-amber-600" />
-                  </div>
-                  <div className="bg-white border border-gray-200 p-3 rounded-xl rounded-tl-none text-[12px] text-gray-700 leading-relaxed shadow-sm">
-                    {aiMessage}
-                  </div>
-                </div>
-              </div>
-              <div className="p-3 border-t border-gray-100 bg-white">
-                <div className="relative">
-                  <input type="text" placeholder="Ask AI for guidance..." className="w-full bg-gray-50 border border-gray-200 rounded-full px-4 py-2 pr-10 text-[12px] focus:outline-none focus:ring-1 focus:ring-amber-500" />
-                  <button className="absolute right-1 top-1 p-1.5 rounded-full text-amber-600 hover:bg-amber-50 transition-colors">
-                    <ArrowRight className="h-3.5 w-3.5" />
-                  </button>
-                </div>
-              </div>
-            </div>
+
 
           </div>
         </div>

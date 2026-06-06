@@ -1,4 +1,6 @@
 "use client";
+import { toast } from "sonner";
+import { extractError } from "@/lib/utils";
 import AppLayout from "@/components/layout/AppLayout";
 import { ChevronLeft, Save } from "lucide-react";
 import Link from "next/link";
@@ -30,11 +32,11 @@ export default function NewStudent() {
         router.push("/admin/students");
       } else {
         const error = await res.json();
-        alert(error.detail || "Failed to create student");
+        toast.error(extractError(error.detail || "Failed to create student"));
       }
     } catch (error) {
       console.error(error);
-      alert("Error submitting form");
+      toast.error(extractError("Error submitting form"));
     } finally {
       setLoading(false);
     }

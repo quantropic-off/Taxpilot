@@ -1,7 +1,9 @@
 "use client";
+import { toast } from "sonner";
+import { extractError } from "@/lib/utils";
 import AppLayout from "@/components/layout/AppLayout";
 import { Landmark, FileText, CheckCircle, Calculator, IndianRupee, FileUp } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function MockITaxPortal() {
   const [caseId, setCaseId] = useState<number | null>(null);
@@ -26,6 +28,40 @@ export default function MockITaxPortal() {
   const [taxResult, setTaxResult] = useState<any>(null);
   const [ack, setAck] = useState<string | null>(null);
 
+  useEffect(() => {
+    const savedIncomes = localStorage.getItem('mock_itr_incomes');
+    if (savedIncomes) {
+      try {
+        const parsed = JSON.parse(savedIncomes);
+        const mapped = parsed.map((i: any) => ({ head_of_income: i.head || i.head_of_income, amount: i.amount }));
+        
+        // Merge with existing template to keep all heads visible
+        setIncomes(prev => prev.map(p => {
+          const found = mapped.find((m: any) => m.head_of_income === p.head_of_income);
+          return found ? { ...p, amount: found.amount } : p;
+        }));
+      } catch(e) {}
+    }
+    const savedDeds = localStorage.getItem('mock_itr_deductions');
+    if (savedDeds) {
+      try {
+        const parsed = JSON.parse(savedDeds);
+        const mapped = parsed.map((d: any) => ({ section: d.section, amount_claimed: d.amount || d.amount_claimed }));
+        
+        // Merge with existing template
+        setDeductions(prev => prev.map(p => {
+          const found = mapped.find((m: any) => m.section === p.section);
+          return found ? { ...p, amount_claimed: found.amount_claimed } : p;
+        }));
+      } catch(e) {}
+    }
+    const savedCaseId = localStorage.getItem('mock_itr_caseId');
+    if (savedCaseId) {
+      setCaseId(Number(savedCaseId));
+      setCaseData(prev => ({ ...prev, pan: "ABCDE1234F" }));
+    }
+  }, []);
+
   const handleCreateCase = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
@@ -38,7 +74,7 @@ export default function MockITaxPortal() {
       if (res.ok) {
         setCaseId(data.case_id);
       } else {
-        alert(data.detail || "Error creating case. Check PAN format (e.g. ABCDE1234F).");
+        toast.error(extractError(data.detail || "Error creating case. Check PAN format (e.g. ABCDE1234F)).");
       }
     } catch (e) {
       console.error(e);
@@ -46,7 +82,7 @@ export default function MockITaxPortal() {
   };
 
   const handleComputeTax = async () => {
-    if (!caseId) return alert("Create a case first!");
+    if (!caseId) return toast.error(extractError("Create a case first!"));
     try {
       const payload = {
         incomes: incomes.filter(i => i.amount > 0),
@@ -61,7 +97,7 @@ export default function MockITaxPortal() {
       if (res.ok) {
         setTaxResult(data);
       } else {
-        alert("Error computing tax");
+        toast.error(extractError("Error computing tax"));
       }
     } catch (e) { console.error(e); }
   };

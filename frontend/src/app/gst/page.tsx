@@ -1,9 +1,12 @@
 "use client";
+import { toast } from "sonner";
+import { extractError } from "@/lib/utils";
 import AppLayout from "@/components/layout/AppLayout";
-import { FileText, Calculator, FileCheck2, AlertCircle, Upload, MessageSquare, Plus, Save, ArrowRight } from "lucide-react";
+import { FileText, Calculator, FileCheck2, AlertCircle, Upload, Plus, Save, ArrowRight } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useAuth } from '@/context/AuthContext';
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 interface Invoice {
   invoice_number: string;
@@ -25,12 +28,9 @@ export default function GSTPractice() {
     invoice_number: "", date: "2024-05-15", customer_gstin: "", taxable_value: 0, tax_rate: 18, hsn: ""
   });
 
-  // AI Tutor State
-  const [chatMessages, setChatMessages] = useState<{role: string, content: string}[]>([
-    { role: "assistant", content: "Hello! I'm your AI Tax Tutor. Start by adding B2B invoices. Make sure to include HSN codes as they are mandatory." }
-  ]);
-  const [chatInput, setChatInput] = useState("");
-  const [isTyping, setIsTyping] = useState(false);
+
+  const [isPushing, setIsPushing] = useState(false);
+  const router = useRouter();
 
   const [activeTab, setActiveTab] = useState('GSTR-1 Outward');
 
@@ -64,8 +64,7 @@ export default function GSTPractice() {
     const errs = [];
     if (!inv.hsn || inv.hsn.length < 4) {
       errs.push({ id: "HSN", msg: `Invoice ${inv.invoice_number} requires a valid 4 or 6-digit HSN code.` });
-      // We can optionally trigger AI here, or just let the user ask
-      setChatMessages(prev => [...prev, { role: "assistant", content: `I noticed a validation error. HSN codes are mandatory for B2B invoices under GST. A common HSN for IT Services is '998311'. Try updating it!` }]);
+
     }
     if (inv.taxable_value <= 0) {
       errs.push({ id: "TAX_VAL", msg: `Taxable value for ${inv.invoice_number} must be greater than zero.` });
@@ -77,15 +76,17 @@ export default function GSTPractice() {
   };
 
   const handleAddInvoice = async () => {
-    if (!caseId) return;
-    if (!newInv.invoice_number) return;
+    if (!newInv.invoice_number) {
+      toast.error(extractError("Please enter an Invoice Number."));
+      return;
+    }
 
     // Run Frontend Validation
     const validationErrors = validateInvoice(newInv);
     setErrors(validationErrors);
 
     if (validationErrors.length === 0) {
-      setChatMessages(prev => [...prev, { role: "assistant", content: "Great job! That invoice passes all GST structural validations. You can add more, or push this to the e-Filing portal." }]);
+
     }
 
     // Always save locally so the student can see their mistakes
@@ -115,33 +116,16 @@ export default function GSTPractice() {
     });
   };
 
-  const handleSendChat = async () => {
-    if (!chatInput.trim()) return;
-    
-    const userMsg = { role: "user", content: chatInput };
-    setChatMessages(prev => [...prev, userMsg]);
-    setChatInput("");
-    setIsTyping(true);
-
-    try {
-      const res = await fetch("https://skandaedutech-taxpilot.hf.space/api/v1/ai/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          messages: [...chatMessages, userMsg],
-          context: `Current invoices: ${JSON.stringify(invoices)}`
-        })
-      });
-      const data = await res.json();
-      if (res.ok && data.reply) {
-        setChatMessages(prev => [...prev, { role: "assistant", content: data.reply }]);
-      }
-    } catch (e) {
-      console.error("AI chat error:", e);
-    } finally {
-      setIsTyping(false);
-    }
+  const handleBulkImport = () => {
+    const mockInvoices = [
+      { invoice_number: "IMP-001", date: "2024-05-10", customer_gstin: "27ABCDE1234F1Z5", taxable_value: 50000, tax_rate: 18, hsn: "9983" },
+      { invoice_number: "IMP-002", date: "2024-05-12", customer_gstin: "27XYZDE5678F1Z5", taxable_value: 25000, tax_rate: 12, hsn: "9983" }
+    ];
+    setInvoices(prev => [...prev, ...mockInvoices]);
+    setErrors([]);
   };
+
+
 
   return (
     <AppLayout>
@@ -153,12 +137,25 @@ export default function GSTPractice() {
             <p className="text-[13px] text-gray-500 mt-0.5">Prepare GSTR-1, run validations, and sync to the mock portal.</p>
           </div>
           <div className="flex gap-3">
-            <button className="text-[13px] font-medium bg-white border border-gray-200 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-50 transition-colors flex items-center gap-2">
+            <button onClick={handleBulkImport} className="text-[13px] font-medium bg-white border border-gray-200 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-50 transition-colors flex items-center gap-2">
               <Upload className="h-4 w-4" /> Bulk Import
             </button>
-            <Link href="/mock/gst" className={`text-[13px] font-medium px-4 py-2 rounded-md flex items-center gap-2 transition-colors ${invoices.length > 0 && errors.length === 0 ? "bg-indigo-600 text-white hover:bg-indigo-700" : "bg-gray-100 text-gray-400 cursor-not-allowed pointer-events-none"}`}>
-              <ArrowRight className="h-4 w-4" /> Push to e-Filing Portal
-            </Link>
+            <button 
+              onClick={() => {
+                setIsPushing(true);
+                localStorage.setItem('mock_gst_invoices', JSON.stringify(invoices));
+                if (caseId) localStorage.setItem('mock_gst_caseId', caseId.toString());
+                setTimeout(() => router.push("/mock/gst"), 1500);
+              }}
+              disabled={isPushing || invoices.length === 0 || errors.length > 0}
+              className={`text-[13px] font-medium px-4 py-2 rounded-md flex items-center gap-2 transition-colors ${invoices.length > 0 && errors.length === 0 ? "bg-indigo-600 text-white hover:bg-indigo-700" : "bg-gray-100 text-gray-400 cursor-not-allowed pointer-events-none"}`}
+            >
+              {isPushing ? (
+                <><span className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> Pushing...</>
+              ) : (
+                <><ArrowRight className="h-4 w-4" /> Push to e-Filing Portal</>
+              )}
+            </button>
           </div>
         </div>
 
@@ -236,7 +233,7 @@ export default function GSTPractice() {
                         <input type="number" placeholder="50000" className="w-full text-[13px] p-1.5 rounded border border-gray-300 focus:ring-1 focus:ring-blue-500 outline-none text-right" value={newInv.taxable_value || ""} onChange={e => setNewInv({...newInv, taxable_value: Number(e.target.value)})} />
                       </td>
                       <td className="px-2 py-2">
-                        <select className="w-full text-[13px] p-1.5 rounded border border-gray-300 focus:ring-1 focus:ring-blue-500 outline-none text-right" value={newInv.tax_rate} onChange={e => setNewInv({...newInv, tax_rate: Number(e.target.value)})}>
+                        <select className="w-full text-[13px] p-1.5 pr-8 rounded border border-gray-300 focus:ring-1 focus:ring-blue-500 outline-none truncate text-right" value={newInv.tax_rate} onChange={e => setNewInv({...newInv, tax_rate: Number(e.target.value)})}>
                           <option value={5}>5%</option>
                           <option value={12}>12%</option>
                           <option value={18}>18%</option>
@@ -320,15 +317,15 @@ export default function GSTPractice() {
                   <div className="flex gap-4 mb-4">
                     <div className="flex-1 p-4 bg-gray-50 border border-gray-200 rounded-lg text-center">
                       <p className="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1">Total ITC in Books</p>
-                      <p className="text-2xl font-mono text-gray-900">₹45,200</p>
+                      <p className="text-2xl font-mono text-gray-900">₹0</p>
                     </div>
                     <div className="flex-1 p-4 bg-gray-50 border border-gray-200 rounded-lg text-center">
                       <p className="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1">Total ITC in GSTR-2B</p>
-                      <p className="text-2xl font-mono text-gray-900">₹40,000</p>
+                      <p className="text-2xl font-mono text-gray-900">₹0</p>
                     </div>
                     <div className="flex-1 p-4 bg-red-50 border border-red-200 rounded-lg text-center">
                       <p className="text-[11px] font-bold text-red-500 uppercase tracking-wider mb-1">Unmatched ITC</p>
-                      <p className="text-2xl font-mono text-red-600">₹5,200</p>
+                      <p className="text-2xl font-mono text-red-600">₹0</p>
                     </div>
                   </div>
                 </div>
@@ -373,63 +370,7 @@ export default function GSTPractice() {
               </div>
             </div>
 
-            {/* AI Tutor Chat */}
-            <div className="flex-1 min-h-[250px] bg-white border border-gray-200 rounded-lg shadow-sm flex flex-col overflow-hidden">
-              <div className="bg-indigo-600 text-white p-3 flex items-center gap-3">
-                <div className="p-1.5 bg-white/20 rounded-md">
-                  <MessageSquare className="h-4 w-4" />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-[13px]">Taxpilot AI Tutor</h3>
-                  <p className="text-[10px] text-indigo-100">Live Context Engine</p>
-                </div>
-              </div>
-              <div className="flex-1 p-4 overflow-y-auto bg-gray-50/50 space-y-4 max-h-[300px]">
-                {chatMessages.map((msg, idx) => (
-                  <div key={idx} className={`flex gap-3 ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}>
-                    <div className={`h-7 w-7 rounded-full flex items-center justify-center shrink-0 ${msg.role === 'user' ? 'bg-indigo-600' : 'bg-indigo-100'}`}>
-                      <MessageSquare className={`h-3.5 w-3.5 ${msg.role === 'user' ? 'text-white' : 'text-indigo-600'}`} />
-                    </div>
-                    <div className={`p-3 rounded-xl text-[12px] leading-relaxed shadow-sm max-w-[85%] ${
-                      msg.role === 'user' 
-                        ? 'bg-indigo-600 text-white rounded-tr-none' 
-                        : 'bg-white border border-gray-200 text-gray-700 rounded-tl-none'
-                    }`}>
-                      {msg.content}
-                    </div>
-                  </div>
-                ))}
-                {isTyping && (
-                  <div className="flex gap-3">
-                    <div className="h-7 w-7 rounded-full bg-indigo-100 flex items-center justify-center shrink-0">
-                      <MessageSquare className="h-3.5 w-3.5 text-indigo-600" />
-                    </div>
-                    <div className="bg-white border border-gray-200 p-3 rounded-xl rounded-tl-none text-[12px] text-gray-500 italic shadow-sm">
-                      Thinking...
-                    </div>
-                  </div>
-                )}
-              </div>
-              <div className="p-3 border-t border-gray-100 bg-white">
-                <div className="relative">
-                  <input 
-                    type="text" 
-                    value={chatInput}
-                    onChange={(e) => setChatInput(e.target.value)}
-                    onKeyDown={(e) => e.key === 'Enter' && handleSendChat()}
-                    placeholder="Ask AI for guidance..." 
-                    className="w-full bg-gray-50 border border-gray-200 rounded-full px-4 py-2 pr-10 text-[12px] focus:outline-none focus:ring-1 focus:ring-indigo-500" 
-                  />
-                  <button 
-                    onClick={handleSendChat}
-                    disabled={isTyping || !chatInput.trim()}
-                    className="absolute right-1 top-1 p-1.5 rounded-full text-indigo-600 hover:bg-indigo-50 transition-colors disabled:opacity-50"
-                  >
-                    <ArrowRight className="h-3.5 w-3.5" />
-                  </button>
-                </div>
-              </div>
-            </div>
+
 
           </div>
         </div>

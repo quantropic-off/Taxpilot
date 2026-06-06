@@ -13,7 +13,7 @@ const studentModules = [
   {
     group: "Practice Modules",
     items: [
-      { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
+
       { name: 'GST Practice', href: '/gst', icon: FileText },
       { name: 'TDS Practice', href: '/tds', icon: Calculator },
       { name: 'ITR Practice', href: '/itr', icon: Landmark },
@@ -75,7 +75,7 @@ export default function Sidebar() {
     <aside className="flex h-full w-[240px] flex-col border-r border-gray-200 bg-white select-none shrink-0">
       {/* Brand */}
       <div className="flex h-[52px] items-center px-5 border-b border-gray-100">
-        <Link href="/dashboard" className="flex items-center gap-2.5 group">
+        <Link href={user?.role === "admin" ? "/admin" : "/gst"} className="flex items-center gap-2.5 group">
           <div className="h-7 w-7 rounded-[6px] bg-gradient-to-br from-blue-600 to-blue-700 flex items-center justify-center shadow-sm">
             <Landmark className="h-3.5 w-3.5 text-white" />
           </div>

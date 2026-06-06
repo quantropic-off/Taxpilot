@@ -25,10 +25,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
 
   useEffect(() => {
-    // Check local storage on mount
-    const storedUser = localStorage.getItem("taxpro_user");
+    // Check session storage on mount so login is required per session
+    const storedUser = sessionStorage.getItem("taxpro_user");
     if (storedUser) {
-      setUser(JSON.parse(storedUser));
+      const parsedUser = JSON.parse(storedUser);
+      setUser(parsedUser);
+      // If they are on /login but already have a session, redirect based on role
+      if (pathname === "/login") {
+        if (parsedUser.role === "admin") {
+          router.push("/admin");
+        } else {
+          router.push("/gst");
+        }
+      }
     } else if (pathname !== "/login") {
       router.push("/login");
     }
@@ -36,7 +45,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const login = (newUser: User) => {
     setUser(newUser);
-    localStorage.setItem("taxpro_user", JSON.stringify(newUser));
+    sessionStorage.setItem("taxpro_user", JSON.stringify(newUser));
     if (newUser.role === "admin") {
       router.push("/admin");
     } else {
@@ -46,7 +55,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const logout = () => {
     setUser(null);
-    localStorage.removeItem("taxpro_user");
+    sessionStorage.removeItem("taxpro_user");
     router.push("/login");
   };
 
