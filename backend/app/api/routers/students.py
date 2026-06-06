@@ -110,6 +110,40 @@ def get_student_progress(student_id: int, db: Session = Depends(get_db)):
         "total_cases": total_cases
     }
 
+@router.delete("/{student_id}")
+def delete_student(student_id: int, db: Session = Depends(get_db)):
+    student = db.query(Student).filter(Student.id == student_id).first()
+    if not student:
+        raise HTTPException(status_code=404, detail="Student not found")
+    
+    from database.models import GSTPracticeCase, TDSPracticeCase, ITRPracticeCase
+    
+    # Delete child cases properly to trigger cascade for their entries
+    gst_cases = db.query(GSTPracticeCase).filter(GSTPracticeCase.student_id == str(student_id)).all()
+    for gc in gst_cases:
+        db.delete(gc)
+        
+    tds_cases = db.query(TDSPracticeCase).filter(TDSPracticeCase.student_id == str(student_id)).all()
+    for tc in tds_cases:
+        db.delete(tc)
+        
+    itr_cases = db.query(ITRPracticeCase).filter(ITRPracticeCase.student_id == str(student_id)).all()
+    for ic in itr_cases:
+        db.delete(ic)
+    
+    # We should also delete associated practice cases
+    db.query(PracticeCase).filter(PracticeCase.student_id == student_id).delete(synchronize_session=False)
+    
+    db.delete(student)
+    
+    try:
+        db.commit()
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=f"Failed to delete student: {str(e)}")
+        
+    return {"message": "Student deleted successfully"}
+
 @router.post("/batch/")
 def create_batch(batch: BatchCreate, db: Session = Depends(get_db)):
     try:
